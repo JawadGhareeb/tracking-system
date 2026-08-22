@@ -1,0 +1,165 @@
+@import "tailwindcss" source("..");
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+
+
+body {
+  font-family: "Tajawal", sans-serif;
+  direction: inherit;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+@theme {
+  /* Tailoring studio palette */
+  --white: #ffffff;
+  --white-100: #fdf9f3;
+
+  --font-family: "Tajawal", "sans-serif";
+
+  --primary-100: #fce8ef;
+  --primary-200: #f5c7d5;
+  --primary-300: #c75b7a;
+  --primary-400: #a3445f;
+  --primary-500: #7a2e42;
+
+  --secondary-100: #e6f2f4;
+  --secondary-200: #c6e4e9;
+  --secondary-300: #5aa8b1;
+  --secondary-400: #3f858e;
+  --secondary-500: #2a6a72;
+
+  --accent-100: #fdf9f3;
+
+  --black-DEFAULT: #1f2933;
+  --black-100: #94a3b8;
+  --black-200: #4f5d75;
+  --black-300: #1f2933;
+
+  --danger: #e05858;
+
+  /* Tailwind color tokens */
+  --color-primary-100: #fce8ef;
+  --color-primary-200: #f5c7d5;
+  --color-primary-300: #c75b7a;
+  --color-primary-400: #a3445f;
+  --color-primary-500: #7a2e42;
+  --color-secondary-100: #e6f2f4;
+  --color-secondary-200: #c6e4e9;
+  --color-secondary-300: #5aa8b1;
+  --color-secondary-400: #3f858e;
+  --color-secondary-500: #2a6a72;
+  --color-danger: #e05858;
+  --color-black-100: #94a3b8;
+  --color-black-200: #4f5d75;
+  --color-black-300: #1f2933;
+
+  /* shadcn/ui HSL tokens */
+  --background: 36 71.4% 97.3%;
+  --foreground: 210 24.4% 16.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 210 24.4% 16.1%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 24.4% 16.1%;
+  --primary: 343 49.1% 56.9%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 187 38.5% 40.2%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 189 38.9% 92.9%;
+  --muted-foreground: 215 20.2% 38.4%;
+  --accent: 342 69.7% 87.1%;
+  --accent-foreground: 343 45% 35%;
+  --destructive: 0 68.7% 61.2%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 210 40% 90%;
+  --input: 210 40% 90%;
+  --ring: 343 49.1% 56.9%;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --white: #111318;
+  --white-100: #0b0d12;
+
+  --primary-100: #2a1820;
+  --primary-200: #4c2a37;
+  --primary-300: #d17794;
+  --primary-400: #e097b0;
+  --primary-500: #f0bfd0;
+
+  --secondary-100: #122127;
+  --secondary-200: #1c343d;
+  --secondary-300: #58a2ad;
+  --secondary-400: #72bac3;
+  --secondary-500: #95d2d9;
+
+  --accent-100: #1a1f25;
+
+  --black-100: #94a3b8;
+  --black-200: #cbd5e1;
+  --black-300: #f1f5f9;
+
+  --danger: #f87171;
+
+  --background: 222 23% 8%;
+  --foreground: 210 20% 95%;
+  --card: 222 20% 11%;
+  --card-foreground: 210 20% 95%;
+  --popover: 222 20% 11%;
+  --popover-foreground: 210 20% 95%;
+  --primary: 338 49% 64%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 187 35% 55%;
+  --secondary-foreground: 222 23% 8%;
+  --muted: 218 17% 17%;
+  --muted-foreground: 215 20% 75%;
+  --accent: 334 34% 20%;
+  --accent-foreground: 210 20% 95%;
+  --destructive: 0 82% 72%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 217 15% 24%;
+  --input: 217 15% 24%;
+  --ring: 338 49% 64%;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary));
+  border-radius: 50px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #cecece;
+}
+
+.drop::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #111;
+  opacity: 0.5;
+  width: 100%;
+  height: 100%;
+}
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary)) transparent; /* primary thumb, transparent track */
+}
