@@ -5,7 +5,13 @@ const nextConfig: NextConfig = {
   // races when build/dev are run in parallel.
   distDir: process.env.NODE_ENV === "development" ? "sewing-dev" : "sewing",
   images: {
-    domains: ["www.hospitalbase.somee.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.hospitalbase.somee.com",
+        pathname: "/**",
+      },
+    ],
   },
 };
 
