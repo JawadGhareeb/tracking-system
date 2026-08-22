@@ -10,8 +10,6 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/hook/use-auth";
 import { ROLE_IDS } from "@/constant/roles";
 
-const STRONG_PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9\s]).{8,}$/;
-
 interface IRegisterErrors {
   firstName?: string;
   lastName?: string;
@@ -70,8 +68,6 @@ export default function RegisterPage() {
       nextErrors.password = t("authPages.validation.passwordRequired");
     } else if (normalizedPassword.length < 8) {
       nextErrors.password = t("authPages.validation.passwordMin");
-    } else if (!STRONG_PASSWORD_REGEX.test(normalizedPassword)) {
-      nextErrors.password = t("authPages.validation.passwordStrong");
     }
 
     if (!normalizedConfirmPassword) {
@@ -209,8 +205,6 @@ export default function RegisterPage() {
             placeholder={t("authPages.register.passwordPlaceholder")}
             value={password}
             minLength={8}
-            pattern="^(?=.*[A-Z])(?=.*[^A-Za-z0-9\\s]).{8,}$"
-            title={t("authPages.validation.passwordStrong")}
             onChange={(event) => {
               setPassword(event.target.value);
               setErrors((previous) => ({ ...previous, password: undefined, general: undefined }));

@@ -1,4 +1,4 @@
-const FALLBACK_API_BASE_URL = "https://tracking-back-tyyq.vercel.app/api";
+const FALLBACK_API_BASE_URL = "https://tracking-back-07ex.onrender.com/api";
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
