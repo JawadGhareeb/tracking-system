@@ -20,11 +20,8 @@
 # production
 /build
 /dist
-/sewing-dev
-sewing-dev
-/sewing
-sewing
-
+/.next
+.next
 
 # misc
 .DS_Store
