@@ -295,7 +295,7 @@ export default function HomePage() {
                         onClick={() => { setIsUserMenuOpen(false); router.push("/account/profile"); }}
                         className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
                       >
-                        <span>الملف الشخصي</span>
+                        <span>{t("customerMenu.profile")}</span>
                         <UserRound className="h-4 w-4" />
                       </button>
                       <button
@@ -303,7 +303,7 @@ export default function HomePage() {
                         onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders"); }}
                         className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
                       >
-                        <span>طلباتي</span>
+                        <span>{t("customerMenu.myOrders")}</span>
                         <ClipboardList className="h-4 w-4" />
                       </button>
                       <button
@@ -311,7 +311,7 @@ export default function HomePage() {
                         onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders/new"); }}
                         className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
                       >
-                        <span>إضافة طلب</span>
+                        <span>{t("customerMenu.addOrder")}</span>
                         <Plus className="h-4 w-4" />
                       </button>
                       <div className="my-1 h-px bg-[var(--primary-100)]" />

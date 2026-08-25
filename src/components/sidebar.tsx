@@ -143,12 +143,12 @@ export function Sidebar() {
       icon: Icons.orders,
     },
     {
-      name: "المواد الخام",
+      name: t("sidebar.rawMaterials"),
       href: "/raw-materials",
       icon: Icons.fileText,
     },
     {
-      name: "المصاريف",
+      name: t("sidebar.expenses"),
       href: "/expenses",
       icon: Icons.dollar,
     },
@@ -200,7 +200,7 @@ export function Sidebar() {
             type="button"
             className="flex w-full items-center gap-3 rounded-xl border border-[var(--primary-200)] bg-[var(--white)] px-3 py-2.5 text-right transition hover:border-[var(--primary-300)] hover:bg-[var(--primary-100)]"
             onClick={() => setIsUserMenuOpen((previous) => !previous)}
-            aria-label="خيارات المستخدم"
+            aria-label={t("sidebar.userOptionsAria")}
           >
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--primary-100)] text-[var(--primary-400)]">
