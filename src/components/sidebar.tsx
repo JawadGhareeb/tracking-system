@@ -133,7 +133,12 @@ export function Sidebar() {
       icon: Icons.home,
     },
     {
-      name: t("sidebar.users"),
+      name: t("sidebar.customers"),
+      href: "/customers",
+      icon: Icons.users,
+    },
+    {
+      name: t("sidebar.employees"),
       href: "/employees",
       icon: Icons.users,
     },
@@ -146,11 +151,6 @@ export function Sidebar() {
       name: t("sidebar.rawMaterials"),
       href: "/raw-materials",
       icon: Icons.fileText,
-    },
-    {
-      name: t("sidebar.expenses"),
-      href: "/expenses",
-      icon: Icons.dollar,
     },
     {
       name: t("sidebar.roles"),

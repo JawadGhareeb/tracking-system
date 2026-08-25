@@ -44,6 +44,7 @@ export const API_ENDPOINTS = {
   },
   dashboard: {
     finance: "/dashboard/finance",
+    monthlyStats: "/dashboard/monthly-stats",
     summary: "/dashboard/summary",
   },
   orders: {

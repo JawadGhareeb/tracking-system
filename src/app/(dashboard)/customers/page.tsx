@@ -1,12 +1,9 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -43,9 +40,8 @@ import { useAuth } from "@/hook/use-auth";
 import { useUsers } from "@/hook/use-users";
 import { IUser } from "@/types";
 
-export default function EmployeesPage() {
+export default function CustomersPage() {
   const { t } = useTranslation();
-  const router = useRouter();
   const { profile, fetchProfile } = useAuth();
   const {
     users,
@@ -62,7 +58,7 @@ export default function EmployeesPage() {
   } = useUsers({
     page: 1,
     perPage: 10,
-    roleGroup: "employee",
+    roleGroup: "customer",
   });
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -94,10 +90,7 @@ export default function EmployeesPage() {
     return Math.max(1, Math.ceil(pagination.documentCount / pagination.perPage));
   }, [pagination.documentCount, pagination.perPage]);
 
-  const hasActiveFilters =
-    query.minSalary !== undefined ||
-    query.maxSalary !== undefined ||
-    query.orderByAlpha !== undefined;
+  const hasActiveFilters = query.orderByAlpha !== undefined;
 
   const openDeleteDialog = (user: IUser) => {
     setUserToDelete(user);
@@ -142,25 +135,19 @@ export default function EmployeesPage() {
       <div className="flex items-center gap-3 text-[var(--primary-300)]">
         <Icons.users className="h-6 w-6" />
         <span className="text-sm font-semibold uppercase tracking-wide text-[var(--primary-400)]">
-          {t("dashboardUsers.employeesBadge")}
+          {t("dashboardUsers.customersBadge")}
         </span>
       </div>
 
       <div className="my-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-[var(--black-300)]">{t("dashboardUsers.employeesTitle")}</h1>
+          <h1 className="text-3xl font-bold text-[var(--black-300)]">{t("dashboardUsers.customersTitle")}</h1>
           <p className="text-sm text-[var(--black-100)]">
-            {t("dashboardUsers.employeesDescription")}
+            {t("dashboardUsers.customersDescription")}
           </p>
         </div>
         <div className="flex items-center gap-2">
-        <Link href="/employees/new" className="self-start">
-          <Button className="gap-2">
-            {t("dashboardUsers.addEmployee")}
-            <Icons.add className="h-4 w-4" />
-          </Button>
-        </Link>
-         <Button
+          <Button
               variant="outline"
               onClick={() => clearFilters()}
               disabled={!hasActiveFilters}
@@ -180,47 +167,7 @@ export default function EmployeesPage() {
 
       <Card className="mb-6 bg-transparent border-none shadow-none">
         <CardContent className="pb-6">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="min-salary-filter">{t("dashboardUsers.minSalary")}</Label>
-              <Input
-                id="min-salary-filter"
-                type="number"
-                placeholder={t("dashboardUsers.minSalaryPlaceholder")}
-                value={query.minSalary ?? ""}
-                onChange={(event) => {
-                  const nextValue = event.target.value;
-                  const parsedValue = Number(nextValue);
-                  setFilters({
-                    minSalary:
-                      nextValue === "" || !Number.isFinite(parsedValue)
-                        ? undefined
-                        : parsedValue,
-                  });
-                }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="max-salary-filter">{t("dashboardUsers.maxSalary")}</Label>
-              <Input
-                id="max-salary-filter"
-                type="number"
-                placeholder={t("dashboardUsers.maxSalaryPlaceholder")}
-                value={query.maxSalary ?? ""}
-                onChange={(event) => {
-                  const nextValue = event.target.value;
-                  const parsedValue = Number(nextValue);
-                  setFilters({
-                    maxSalary:
-                      nextValue === "" || !Number.isFinite(parsedValue)
-                        ? undefined
-                        : parsedValue,
-                  });
-                }}
-              />
-            </div>
-
+          <div className="grid gap-4 md:max-w-md">
             <div className="space-y-2">
               <Label htmlFor="order-alpha-filter">{t("dashboardUsers.alphabeticalOrder")}</Label>
               <Select
@@ -258,8 +205,6 @@ export default function EmployeesPage() {
                 <TableHead>{t("dashboardUsers.table.fullName")}</TableHead>
                 <TableHead>{t("dashboardUsers.table.email")}</TableHead>
                 <TableHead>{t("dashboardUsers.table.username")}</TableHead>
-                <TableHead>{t("dashboardUsers.table.role")}</TableHead>
-                <TableHead>{t("dashboardUsers.table.salary")}</TableHead>
                 <TableHead>{t("dashboardUsers.table.status")}</TableHead>
                 <TableHead className="text-center">{t("dashboardUsers.table.actions")}</TableHead>
               </TableRow>
@@ -267,7 +212,7 @@ export default function EmployeesPage() {
             <TableBody>
               {isLoading ? (
                 Array.from({ length: 6 }, (_, index) => (
-                  <TableRow key={`employees-skeleton-${index}`}>
+                  <TableRow key={`customers-skeleton-${index}`}>
                     <TableCell>
                       <Skeleton className="h-5 w-36" />
                     </TableCell>
@@ -276,12 +221,6 @@ export default function EmployeesPage() {
                     </TableCell>
                     <TableCell>
                       <Skeleton className="h-5 w-24" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-7 w-20 rounded-full" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-5 w-20" />
                     </TableCell>
                     <TableCell>
                       <Skeleton className="h-7 w-24 rounded-full" />
@@ -297,8 +236,8 @@ export default function EmployeesPage() {
                 ))
               ) : visibleUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-10 text-center">
-                    {t("dashboardUsers.emptyEmployees")}
+                  <TableCell colSpan={5} className="py-10 text-center">
+                    {t("dashboardUsers.emptyCustomers")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -309,12 +248,6 @@ export default function EmployeesPage() {
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.username}</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full bg-[var(--primary-100)] px-3 py-1 text-xs font-semibold text-[var(--primary-400)]">
-                        {user.role.name}
-                      </span>
-                    </TableCell>
-                    <TableCell>{user.salary.toLocaleString()}</TableCell>
                     <TableCell>
                       <span
                         className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
@@ -343,7 +276,7 @@ export default function EmployeesPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => router.push(`/employees/${user._id}`)}
+                          onClick={() => window.location.assign(`/customers/${user._id}`)}
                           aria-label={t("dashboardUsers.aria.editUser")}
                         >
                           <Icons.edit className="h-5 w-5 text-[var(--primary-300)]" />

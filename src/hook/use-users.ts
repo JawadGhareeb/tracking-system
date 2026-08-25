@@ -16,6 +16,7 @@ interface IUsersQuery {
   minSalary?: number;
   maxSalary?: number;
   orderByAlpha?: 0 | 1;
+  roleGroup?: "employee" | "customer";
 }
 
 function toNumber(value: unknown, fallback: number): number {
@@ -64,6 +65,7 @@ export function useUsers(initialQuery?: Partial<IUsersQuery>) {
     minSalary: initialQuery?.minSalary,
     maxSalary: initialQuery?.maxSalary,
     orderByAlpha: initialQuery?.orderByAlpha,
+    roleGroup: initialQuery?.roleGroup,
   });
   const [data, setData] = useState(emptyUsersResponse);
   const [isLoading, setIsLoading] = useState(false);
@@ -243,6 +245,7 @@ export function useUsers(initialQuery?: Partial<IUsersQuery>) {
     setQuery((previous) => ({
       page: 1,
       perPage: previous.perPage,
+      roleGroup: previous.roleGroup,
     }));
   }, []);
 

@@ -1,10 +1,13 @@
 import { API_ENDPOINTS } from "@/constant/endpoints";
 import { apiClient } from "@/services/api-client";
-import { IDashboardSummary, IFinanceSummary } from "@/types";
+import { IDashboardSummary, IFinanceSummary, IMonthlyDashboardStatisticsResponse } from "@/types";
 
 export const dashboardApiService = {
   getFinance(month?: string) {
     return apiClient.get<IFinanceSummary>(API_ENDPOINTS.dashboard.finance, { query: { month } });
+  },
+  getMonthlyStats(months = 12) {
+    return apiClient.get<IMonthlyDashboardStatisticsResponse>(API_ENDPOINTS.dashboard.monthlyStats, { query: { months } });
   },
   getSummary() {
     return apiClient.get<IDashboardSummary>(API_ENDPOINTS.dashboard.summary);

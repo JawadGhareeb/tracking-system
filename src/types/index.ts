@@ -131,11 +131,28 @@ export interface IFinanceSummary {
   loss: number;
 }
 
+export interface IMonthlyDashboardStatistic {
+  month: string;
+  revenue: number;
+  expenses: number;
+  profit: number;
+  loss: number;
+  rawMaterialExpenses: number;
+  rawMaterialsAdded: number;
+}
+
+export interface IMonthlyDashboardStatisticsResponse {
+  months: number;
+  statistics: IMonthlyDashboardStatistic[];
+}
+
 export interface IDashboardSummary {
   pendingOrders: number;
   inProduction: number;
   deliveredOrders: number;
   users: number;
+  employees: number;
+  customers: number;
   lowStockMaterials: number;
 }
 

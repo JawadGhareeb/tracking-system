@@ -15,6 +15,7 @@ interface IUserListQuery {
   minSalary?: number;
   maxSalary?: number;
   orderByAlpha?: 0 | 1;
+  roleGroup?: "employee" | "customer";
 }
 
 interface IUserBriefResponse {
