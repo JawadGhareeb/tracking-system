@@ -38,6 +38,7 @@ export default function EmployeeLayout({ children }: { children: ReactNode }) {
           <Link href="/" className="font-bold text-[var(--primary-500)]">{t("common.appTitle")}</Link>
           <nav className="flex items-center gap-2 text-sm font-semibold">
             <Link href="/employee/orders" className="rounded-xl bg-[var(--primary-100)] px-4 py-2 text-[var(--primary-500)]">{t("employeePortal.workOrders")}</Link>
+            <Link href="/employee/profile" className="rounded-xl px-4 py-2 text-[var(--black-200)] hover:bg-[var(--primary-100)]">{t("employeePortal.profile")}</Link>
             <Link href="/" className="rounded-xl px-4 py-2 text-[var(--black-200)] hover:bg-[var(--primary-100)]">{t("sidebar.goToWebsite")}</Link>
           </nav>
         </div>

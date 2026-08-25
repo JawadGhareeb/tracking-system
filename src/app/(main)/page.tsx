@@ -350,6 +350,14 @@ export default function HomePage() {
                       <>
                         <button
                           type="button"
+                          onClick={() => { setIsUserMenuOpen(false); router.push("/employee/profile"); }}
+                          className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                        >
+                          <span>{t("employeePortal.profile")}</span>
+                          <UserRound className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => { setIsUserMenuOpen(false); router.push("/employee/orders"); }}
                           className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
                         >
