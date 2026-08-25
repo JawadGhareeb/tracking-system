@@ -148,6 +148,11 @@ export function Sidebar() {
       icon: Icons.fileText,
     },
     {
+      name: "المصاريف",
+      href: "/expenses",
+      icon: Icons.dollar,
+    },
+    {
       name: t("sidebar.roles"),
       href: "/roles",
       icon: Icons.briefcase,

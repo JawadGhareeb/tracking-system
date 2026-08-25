@@ -88,6 +88,47 @@ export interface IUpdateRolePayload {
   description?: string | null;
 }
 
+export type ExpenseCategory = "RAW_MATERIAL" | "SALARY" | "ELECTRICITY" | "TRANSPORT" | "MAINTENANCE" | "RENT" | "OTHER";
+
+export interface IExpense {
+  _id: string;
+  title: string;
+  category: ExpenseCategory;
+  amount: number;
+  date: string;
+  description: string;
+  createdAt: string;
+}
+
+export interface IExpensePayload {
+  title: string;
+  category: ExpenseCategory;
+  amount: number;
+  date: string;
+  description?: string;
+}
+
+export interface IExpensesResponse {
+  items: IExpense[];
+  pagination: IPagination;
+}
+
+export interface IFinanceSummary {
+  month: string;
+  revenue: number;
+  expenses: number;
+  profit: number;
+  loss: number;
+}
+
+export interface IDashboardSummary {
+  pendingOrders: number;
+  inProduction: number;
+  deliveredOrders: number;
+  users: number;
+  lowStockMaterials: number;
+}
+
 export type RawMaterialCategory = "FABRIC" | "THREAD" | "ACCESSORY" | "OTHER";
 export type RawMaterialUnit = "PIECE" | "METER" | "KILOGRAM" | "ROLL" | "UNIT";
 

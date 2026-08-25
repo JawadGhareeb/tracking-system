@@ -28,6 +28,14 @@ export const API_ENDPOINTS = {
     available: "/raw-materials/available",
     byId: (id: string) => `/raw-materials/${id}`,
   },
+  expenses: {
+    list: "/expenses",
+    byId: (id: string) => `/expenses/${id}`,
+  },
+  dashboard: {
+    finance: "/dashboard/finance",
+    summary: "/dashboard/summary",
+  },
   orders: {
     list: "/orders",
     byId: (id: string) => `/orders/${id}`,
