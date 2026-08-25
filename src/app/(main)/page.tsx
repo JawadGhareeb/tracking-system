@@ -27,7 +27,6 @@ import { getAuthTokenCookie } from "@/services/auth-cookie";
 import { authApiService } from "@/services/api.auth.service";
 import { normalizeUser } from "@/lib/normalize-api";
 import { cn } from "@/lib/utils";
-import { ROLE_IDS } from "@/constant/roles";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -49,7 +48,7 @@ export default function HomePage() {
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [roleId, setRoleId] = useState("");
+  const [roleName, setRoleName] = useState("");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const languageMode: LanguageMode = i18n.resolvedLanguage === "en" ? "en" : "ar";
 
@@ -74,7 +73,7 @@ export default function HomePage() {
     setIsAuthenticated(Boolean(token));
 
     if (!token) {
-      setRoleId("");
+      setRoleName("");
       return;
     }
 
@@ -82,10 +81,10 @@ export default function HomePage() {
       .me(token)
       .then((user) => {
         const normalizedUser = normalizeUser(user);
-        setRoleId(normalizedUser.role._id);
+        setRoleName(normalizedUser.role.name.trim().toLowerCase());
       })
       .catch(() => {
-        setRoleId("");
+        setRoleName("");
       });
   }, []);
 
@@ -150,7 +149,7 @@ export default function HomePage() {
 
     logout();
     setIsAuthenticated(false);
-    setRoleId("");
+    setRoleName("");
     setIsUserMenuOpen(false);
     router.push("/login");
   };
@@ -160,7 +159,7 @@ export default function HomePage() {
     router.push("/dashboard");
   };
 
-  const isAdmin = roleId === ROLE_IDS.ADMIN;
+  const isAdmin = ["admin", "superadmin", "أدمن"].includes(roleName);
 
   return (
     <div className="relative overflow-hidden bg-[var(--white-100)] text-[var(--black-300)]">
