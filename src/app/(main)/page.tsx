@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   ArrowRight,
+  ClipboardList,
   Languages,
   LayoutDashboard,
   LogIn,
@@ -16,6 +17,7 @@ import {
   Monitor,
   Moon,
   Phone,
+  Plus,
   Scissors,
   Sun,
   UserRound,
@@ -287,6 +289,36 @@ export default function HomePage() {
               </button>
               {isUserMenuOpen ? (
                 <div className="absolute left-0 top-12 min-w-52 rounded-xl border border-[var(--primary-100)] bg-[var(--white)] p-1.5 shadow-[0_14px_30px_rgba(0,0,0,0.12)]">
+                  {isAuthenticated && !isAdmin ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => { setIsUserMenuOpen(false); router.push("/account/profile"); }}
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                      >
+                        <span>الملف الشخصي</span>
+                        <UserRound className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders"); }}
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                      >
+                        <span>طلباتي</span>
+                        <ClipboardList className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders/new"); }}
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                      >
+                        <span>إضافة طلب</span>
+                        <Plus className="h-4 w-4" />
+                      </button>
+                      <div className="my-1 h-px bg-[var(--primary-100)]" />
+                    </>
+                  ) : null}
+
                   {isAuthenticated && isAdmin ? (
                     <button
                       type="button"
