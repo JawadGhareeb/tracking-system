@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_TOKEN_COOKIE } from "@/constant/endpoints";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/employees", "/orders", "/roles", "/raw-materials", "/expenses"];
+const PROTECTED_PREFIXES = ["/dashboard", "/employees", "/orders", "/roles", "/raw-materials", "/expenses", "/my-orders", "/account"];
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

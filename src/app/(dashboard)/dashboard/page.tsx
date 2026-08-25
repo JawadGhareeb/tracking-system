@@ -143,9 +143,9 @@ export default function DashboardHomePage() {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Link href="/orders/new">
+              <Link href="/orders?status=PENDING">
                 <Button className="rounded-xl px-5">
-                  {t("dashboardHome.newOrder")}
+                  مراجعة الطلبات قيد الانتظار
                   <ArrowUpRight className="ms-2 h-4 w-4" />
                 </Button>
               </Link>

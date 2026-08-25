@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
@@ -180,12 +179,6 @@ export default function OrdersPage() {
         </div>
         <div className="flex items-center gap-2">
 
-        <Link href="/orders/new" className="self-start">
-          <Button className="gap-2">
-            <Icons.add className="h-4 w-4" />
-            {t("dashboardOrders.addOrder")}
-          </Button>
-        </Link>
 <Button
               variant="outline"
               onClick={() => clearFilters()}
@@ -387,7 +380,7 @@ export default function OrdersPage() {
                         ? dayjs(order.expectedFinishDate).format("YYYY-MM-DD")
                         : "-"}
                     </TableCell>
-                    <TableCell>{order.cost.toLocaleString()}</TableCell>
+                    <TableCell>{order.totalPrice.toLocaleString()}</TableCell>
                     <TableCell>
                       {order.employee
                         ? `${order.employee.fullName.firstName} ${order.employee.fullName.lastName}`

@@ -7,7 +7,7 @@ type TokenResolver = () => string | null | Promise<string | null>;
 
 interface IRequestOptions<TBody = unknown>
   extends Omit<RequestInit, "method" | "body" | "headers"> {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   headers?: HeadersInit;
   query?: Record<string, QueryValue>;
   body?: TBody;
@@ -125,6 +125,11 @@ export function createApiClient(tokenResolver?: TokenResolver) {
       endpoint: string,
       options?: Omit<IRequestOptions<TBody>, "method">
     ) => request<TResponse, TBody>(endpoint, { ...options, method: "PUT" }),
+
+    patch: <TResponse, TBody = unknown>(
+      endpoint: string,
+      options?: Omit<IRequestOptions<TBody>, "method">
+    ) => request<TResponse, TBody>(endpoint, { ...options, method: "PATCH" }),
 
     delete: <TResponse>(
       endpoint: string,

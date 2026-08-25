@@ -139,13 +139,45 @@ export interface IDeliveryLocation {
   notes?: string;
 }
 
+export interface IOrderMaterial {
+  rawMaterial: IRawMaterial;
+  nameSnapshot: string;
+  colorSnapshot: string;
+  quantity: number;
+  unitPriceSnapshot: number;
+  subtotal: number;
+}
+
+export interface ICustomerOrderMaterialInput {
+  rawMaterialId: string;
+  quantity: number;
+}
+
+export interface ICreateMyOrderPayload {
+  description: string;
+  notes: string;
+  rawMaterials: ICustomerOrderMaterialInput[];
+  deliveryLocation?: IDeliveryLocation;
+}
+
+export interface IAssignOrderPayload {
+  employee: string;
+  expectedFinishDate: string;
+  additionalCost?: number;
+}
+
 export interface IOrder {
   _id: string;
   customer: IUser;
   description: string;
   status: OrderStatus;
   expectedFinishDate?: string;
-  cost: number;
+  notes: string;
+  rawMaterials: IOrderMaterial[];
+  materialCost: number;
+  additionalCost: number;
+  totalPrice: number;
+  cost?: number;
   employee?: IUser;
   sizes: string[];
   colors: string[];
