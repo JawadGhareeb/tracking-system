@@ -69,7 +69,7 @@ export default function LoginPage() {
     } else if (isEmployeeRoleName(roleName)) {
       router.replace("/employee/orders");
     } else {
-      router.replace("/");
+      router.replace("/my-orders");
     }
   };
 
