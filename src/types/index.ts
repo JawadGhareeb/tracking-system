@@ -129,21 +129,8 @@ export interface IFinanceSummary {
   expenses: number;
   profit: number;
   loss: number;
-}
-
-export interface IMonthlyDashboardStatistic {
-  month: string;
-  revenue: number;
-  expenses: number;
-  profit: number;
-  loss: number;
   rawMaterialExpenses: number;
   rawMaterialsAdded: number;
-}
-
-export interface IMonthlyDashboardStatisticsResponse {
-  months: number;
-  statistics: IMonthlyDashboardStatistic[];
 }
 
 export interface IDashboardSummary {

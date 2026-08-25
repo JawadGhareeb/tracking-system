@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
 import {
   Activity,
   ArrowUpRight,
@@ -18,24 +17,24 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { dashboardApiService } from "@/services/api.dashboard.service";
-import {
-  IDashboardSummary,
-  IFinanceSummary,
-  IMonthlyDashboardStatistic,
-} from "@/types";
+import { IDashboardSummary, IFinanceSummary } from "@/types";
+
+const now = new Date();
+const CURRENT_YEAR = now.getFullYear();
+const CURRENT_MONTH = String(now.getMonth() + 1).padStart(2, "0");
+const YEAR_OPTIONS = Array.from({ length: 10 }, (_, index) => String(CURRENT_YEAR - index));
+const MONTH_OPTIONS = Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, "0"));
 
 const emptySummary: IDashboardSummary = {
   pendingOrders: 0,
@@ -46,24 +45,37 @@ const emptySummary: IDashboardSummary = {
   customers: 0,
   lowStockMaterials: 0,
 };
+
 const emptyFinance = (month: string): IFinanceSummary => ({
   month,
   revenue: 0,
   expenses: 0,
   profit: 0,
   loss: 0,
+  rawMaterialExpenses: 0,
+  rawMaterialsAdded: 0,
 });
 
 export default function DashboardHomePage() {
   const { t, i18n } = useTranslation();
   const { error } = useToast();
-  const [month, setMonth] = useState(dayjs().format("YYYY-MM"));
+  const [selectedYear, setSelectedYear] = useState(String(CURRENT_YEAR));
+  const [selectedMonth, setSelectedMonth] = useState(CURRENT_MONTH);
   const [summary, setSummary] = useState<IDashboardSummary>(emptySummary);
-  const [finance, setFinance] = useState<IFinanceSummary>(emptyFinance(month));
-  const [monthlyStats, setMonthlyStats] = useState<IMonthlyDashboardStatistic[]>([]);
+  const [finance, setFinance] = useState<IFinanceSummary>(
+    emptyFinance(`${CURRENT_YEAR}-${CURRENT_MONTH}`)
+  );
   const [loadingSummary, setLoadingSummary] = useState(true);
   const [loadingFinance, setLoadingFinance] = useState(true);
-  const [loadingMonthlyStats, setLoadingMonthlyStats] = useState(true);
+
+  const selectedPeriod = `${selectedYear}-${selectedMonth}`;
+  const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-US" : "ar-SY";
+
+  const monthLabel = (month: string) =>
+    new Intl.DateTimeFormat(locale, {
+      month: "long",
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(2026, Number(month) - 1, 1)));
 
   const loadSummary = useCallback(async () => {
     setLoadingSummary(true);
@@ -82,38 +94,21 @@ export default function DashboardHomePage() {
   const loadFinance = useCallback(async () => {
     setLoadingFinance(true);
     try {
-      setFinance(await dashboardApiService.getFinance(month));
+      setFinance(await dashboardApiService.getFinance(selectedPeriod));
     } catch (requestError) {
       error({
         title: t("adminOverview.loadFinanceFailed"),
         description: requestError instanceof Error ? requestError.message : undefined,
       });
-      setFinance(emptyFinance(month));
+      setFinance(emptyFinance(selectedPeriod));
     } finally {
       setLoadingFinance(false);
     }
-  }, [error, month, t]);
-
-  const loadMonthlyStats = useCallback(async () => {
-    setLoadingMonthlyStats(true);
-    try {
-      const response = await dashboardApiService.getMonthlyStats(12);
-      setMonthlyStats(response.statistics ?? []);
-    } catch (requestError) {
-      error({
-        title: t("adminOverview.loadMonthlyStatsFailed"),
-        description: requestError instanceof Error ? requestError.message : undefined,
-      });
-      setMonthlyStats([]);
-    } finally {
-      setLoadingMonthlyStats(false);
-    }
-  }, [error, t]);
+  }, [error, selectedPeriod, t]);
 
   useEffect(() => {
     void loadSummary();
-    void loadMonthlyStats();
-  }, [loadMonthlyStats, loadSummary]);
+  }, [loadSummary]);
 
   useEffect(() => {
     void loadFinance();
@@ -152,22 +147,22 @@ export default function DashboardHomePage() {
     },
   ];
 
-  const financeCards = [
-    { label: t("adminOverview.revenue"), value: finance.revenue, icon: Banknote },
-    { label: t("adminOverview.monthlyExpenses"), value: finance.expenses, icon: DollarSign },
-    { label: t("adminOverview.profit"), value: finance.profit, icon: TrendingUp },
-    { label: t("adminOverview.loss"), value: finance.loss, icon: TrendingDown },
+  const statisticCards = [
+    { label: t("adminOverview.stats.revenue"), value: finance.revenue, icon: Banknote },
+    { label: t("adminOverview.stats.expenses"), value: finance.expenses, icon: DollarSign },
+    { label: t("adminOverview.stats.profit"), value: finance.profit, icon: TrendingUp },
+    { label: t("adminOverview.stats.loss"), value: finance.loss, icon: TrendingDown },
+    {
+      label: t("adminOverview.stats.rawMaterialExpenses"),
+      value: finance.rawMaterialExpenses,
+      icon: DollarSign,
+    },
+    {
+      label: t("adminOverview.stats.rawMaterialsAdded"),
+      value: finance.rawMaterialsAdded,
+      icon: Boxes,
+    },
   ];
-
-  const locale = i18n.resolvedLanguage?.startsWith("en") ? "en-US" : "ar-SY";
-  const formatMonth = (value: string) => {
-    const [year, monthNumber] = value.split("-").map(Number);
-    return new Intl.DateTimeFormat(locale, {
-      month: "long",
-      year: "numeric",
-      timeZone: "UTC",
-    }).format(new Date(Date.UTC(year, monthNumber - 1, 1)));
-  };
 
   return (
     <div className="container mx-auto space-y-8 p-6">
@@ -220,99 +215,72 @@ export default function DashboardHomePage() {
       </section>
 
       <section className="space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-2xl font-bold">{t("adminOverview.monthlyFinance")}</h2>
-            <p className="mt-1 text-sm text-[var(--black-100)]">{t("adminOverview.revenueNote")}</p>
+            <h2 className="text-2xl font-bold">{t("adminOverview.monthlyStatistics")}</h2>
+            <p className="mt-1 text-sm text-[var(--black-100)]">
+              {t("adminOverview.monthlyStatisticsDescription")}
+            </p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="dashboard-month">{t("adminOverview.month")}</Label>
-            <Input
-              id="dashboard-month"
-              type="month"
-              value={month}
-              onChange={(event) => setMonth(event.target.value)}
-            />
+
+          <div className="grid w-full gap-4 sm:grid-cols-2 lg:w-auto lg:min-w-[420px]">
+            <div className="space-y-2">
+              <Label htmlFor="statistics-year">{t("adminOverview.year")}</Label>
+              <Select value={selectedYear} onValueChange={setSelectedYear}>
+                <SelectTrigger id="statistics-year">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {YEAR_OPTIONS.map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="statistics-month">{t("adminOverview.month")}</Label>
+              <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                <SelectTrigger id="statistics-month">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {MONTH_OPTIONS.map((month) => (
+                    <SelectItem key={month} value={month}>
+                      {monthLabel(month)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {financeCards.map(({ label, value, icon: Icon }) => (
-            <Card key={label}>
+
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {statisticCards.map(({ label, value, icon: Icon }) => (
+            <Card key={label} className="h-full">
               <CardContent className="py-6">
-                <div className="flex items-start justify-between">
-                  <p className="text-sm font-semibold text-[var(--black-200)]">{label}</p>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--black-200)]">{label}</p>
+                    {loadingFinance ? (
+                      <Skeleton className="mt-5 h-10 w-32" />
+                    ) : (
+                      <p className="mt-4 text-3xl font-black text-[var(--black-300)]">
+                        {value.toLocaleString()}
+                      </p>
+                    )}
+                  </div>
                   <span className="rounded-xl bg-[var(--secondary-100)] p-2 text-[var(--secondary-500)]">
                     <Icon className="h-5 w-5" />
                   </span>
                 </div>
-                {loadingFinance ? (
-                  <Skeleton className="mt-5 h-10 w-32" />
-                ) : (
-                  <p className="mt-4 text-3xl font-black text-[var(--black-300)]">
-                    {value.toLocaleString()}
-                  </p>
-                )}
               </CardContent>
             </Card>
           ))}
         </div>
-      </section>
-
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-2xl font-bold">{t("adminOverview.monthlyStatistics")}</h2>
-          <p className="mt-1 text-sm text-[var(--black-100)]">
-            {t("adminOverview.monthlyStatisticsDescription")}
-          </p>
-        </div>
-        <Card className="p-0">
-          <CardContent className="px-0 pb-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("adminOverview.stats.month")}</TableHead>
-                  <TableHead>{t("adminOverview.stats.revenue")}</TableHead>
-                  <TableHead>{t("adminOverview.stats.expenses")}</TableHead>
-                  <TableHead>{t("adminOverview.stats.profit")}</TableHead>
-                  <TableHead>{t("adminOverview.stats.loss")}</TableHead>
-                  <TableHead>{t("adminOverview.stats.rawMaterialExpenses")}</TableHead>
-                  <TableHead>{t("adminOverview.stats.rawMaterialsAdded")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loadingMonthlyStats ? (
-                  Array.from({ length: 6 }, (_, index) => (
-                    <TableRow key={`monthly-stat-skeleton-${index}`}>
-                      {Array.from({ length: 7 }, (_, cellIndex) => (
-                        <TableCell key={cellIndex}>
-                          <Skeleton className="h-5 w-24" />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : monthlyStats.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="py-10 text-center text-[var(--black-100)]">
-                      {t("adminOverview.stats.empty")}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  monthlyStats.map((stat) => (
-                    <TableRow key={stat.month}>
-                      <TableCell className="font-semibold">{formatMonth(stat.month)}</TableCell>
-                      <TableCell>{stat.revenue.toLocaleString()}</TableCell>
-                      <TableCell>{stat.expenses.toLocaleString()}</TableCell>
-                      <TableCell>{stat.profit.toLocaleString()}</TableCell>
-                      <TableCell>{stat.loss.toLocaleString()}</TableCell>
-                      <TableCell>{stat.rawMaterialExpenses.toLocaleString()}</TableCell>
-                      <TableCell>{stat.rawMaterialsAdded.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
       </section>
     </div>
   );
