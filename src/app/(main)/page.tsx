@@ -27,6 +27,8 @@ import { getAuthTokenCookie } from "@/services/auth-cookie";
 import { authApiService } from "@/services/api.auth.service";
 import { normalizeUser } from "@/lib/normalize-api";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
+import { isAdminRoleName, isEmployeeRoleName } from "@/lib/role-access";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -40,6 +42,7 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const { logout } = useAuth();
+  const { info: showInfoToast } = useToast();
   const languageMenuRef = useRef<HTMLDivElement | null>(null);
   const themeMenuRef = useRef<HTMLDivElement | null>(null);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
@@ -159,7 +162,31 @@ export default function HomePage() {
     router.push("/dashboard");
   };
 
-  const isAdmin = ["admin", "superadmin", "أدمن"].includes(roleName);
+  const handleStartNow = () => {
+    if (!isAuthenticated) {
+      showInfoToast({
+        title: t("home.loginRequiredTitle"),
+        description: t("home.loginRequiredDescription"),
+      });
+      router.push("/login");
+      return;
+    }
+
+    if (isAdminRoleName(roleName)) {
+      router.push("/dashboard");
+      return;
+    }
+
+    if (isEmployeeRoleName(roleName)) {
+      router.push("/employee/orders");
+      return;
+    }
+
+    router.push("/my-orders/new");
+  };
+
+  const isAdmin = isAdminRoleName(roleName);
+  const isEmployee = isEmployeeRoleName(roleName);
 
   return (
     <div className="relative overflow-hidden bg-[var(--white-100)] text-[var(--black-300)]">
@@ -276,74 +303,95 @@ export default function HomePage() {
                 </div>
               ) : null}
             </div>
-            <div ref={userMenuRef} className="relative">
-              <button
-                type="button"
-                onClick={() => setIsUserMenuOpen((previous) => !previous)}
-                className="inline-flex items-center gap-2 rounded-xl bg-[var(--primary-300)] px-3 py-2 text-[var(--white)] transition hover:bg-[var(--primary-400)]"
-                aria-label={t("auth.account")}
-              >
-                <UserRound className="h-5 w-5" />
-                <span className="text-sm font-semibold">{t("auth.account")}</span>
-              </button>
-              {isUserMenuOpen ? (
-                <div className="absolute left-0 top-12 min-w-52 rounded-xl border border-[var(--primary-100)] bg-[var(--white)] p-1.5 shadow-[0_14px_30px_rgba(0,0,0,0.12)]">
-                  {isAuthenticated && !isAdmin ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => { setIsUserMenuOpen(false); router.push("/account/profile"); }}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
-                      >
-                        <span>{t("customerMenu.profile")}</span>
-                        <UserRound className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders"); }}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
-                      >
-                        <span>{t("customerMenu.myOrders")}</span>
-                        <ClipboardList className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders/new"); }}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
-                      >
-                        <span>{t("customerMenu.addOrder")}</span>
-                        <Plus className="h-4 w-4" />
-                      </button>
-                      <div className="my-1 h-px bg-[var(--primary-100)]" />
-                    </>
-                  ) : null}
+            {isAuthenticated ? (
+              <div ref={userMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsUserMenuOpen((previous) => !previous)}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[var(--primary-300)] px-3 py-2 text-[var(--white)] transition hover:bg-[var(--primary-400)]"
+                  aria-label={t("auth.account")}
+                >
+                  <UserRound className="h-5 w-5" />
+                  <span className="text-sm font-semibold">{t("auth.account")}</span>
+                </button>
+                {isUserMenuOpen ? (
+                  <div className="absolute left-0 top-12 min-w-52 rounded-xl border border-[var(--primary-100)] bg-[var(--white)] p-1.5 shadow-[0_14px_30px_rgba(0,0,0,0.12)]">
+                    {!isAdmin && !isEmployee ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => { setIsUserMenuOpen(false); router.push("/account/profile"); }}
+                          className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                        >
+                          <span>{t("customerMenu.profile")}</span>
+                          <UserRound className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders"); }}
+                          className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                        >
+                          <span>{t("customerMenu.myOrders")}</span>
+                          <ClipboardList className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setIsUserMenuOpen(false); router.push("/my-orders/new"); }}
+                          className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                        >
+                          <span>{t("customerMenu.addOrder")}</span>
+                          <Plus className="h-4 w-4" />
+                        </button>
+                        <div className="my-1 h-px bg-[var(--primary-100)]" />
+                      </>
+                    ) : null}
 
-                  {isAuthenticated && isAdmin ? (
+                    {isEmployee ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => { setIsUserMenuOpen(false); router.push("/employee/orders"); }}
+                          className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                        >
+                          <span>{t("employeePortal.workOrders")}</span>
+                          <ClipboardList className="h-4 w-4" />
+                        </button>
+                        <div className="my-1 h-px bg-[var(--primary-100)]" />
+                      </>
+                    ) : null}
+
+                    {isAdmin ? (
+                      <button
+                        type="button"
+                        onClick={goToDashboard}
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
+                      >
+                        <span>{t("auth.dashboard")}</span>
+                        <LayoutDashboard className="h-4 w-4" />
+                      </button>
+                    ) : null}
+
                     <button
                       type="button"
-                      onClick={goToDashboard}
+                      onClick={handleUserAction}
                       className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
                     >
-                      <span>{t("auth.dashboard")}</span>
-                      <LayoutDashboard className="h-4 w-4" />
-                    </button>
-                  ) : null}
-
-                  <button
-                    type="button"
-                    onClick={handleUserAction}
-                    className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-right text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)]"
-                  >
-                    <span>{isAuthenticated ? t("auth.logout") : t("auth.login")}</span>
-                    {isAuthenticated ? (
+                      <span>{t("auth.logout")}</span>
                       <LogOut className="h-4 w-4" />
-                    ) : (
-                      <LogIn className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              ) : null}
-            </div>
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-xl bg-[var(--primary-300)] px-3 py-2 text-[var(--white)] transition hover:bg-[var(--primary-400)]"
+                aria-label={t("auth.login")}
+              >
+                <LogIn className="h-5 w-5" />
+                <span className="text-sm font-semibold">{t("auth.login")}</span>
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -369,19 +417,14 @@ export default function HomePage() {
               {t("home.heroDescription")}
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/login"
+              <button
+                type="button"
+                onClick={handleStartNow}
                 className="inline-flex items-center gap-2 rounded-2xl bg-[var(--primary-300)] px-6 py-3 text-sm font-semibold text-[var(--white)] shadow-[0_14px_28px_rgba(199,91,122,0.32)] transition hover:-translate-y-0.5 hover:bg-[var(--primary-400)]"
               >
                 {t("home.startNow")}
                 <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#about"
-                className="inline-flex items-center gap-2 rounded-2xl border border-[var(--primary-200)] bg-[var(--white)] px-6 py-3 text-sm font-semibold text-[var(--black-300)] transition hover:border-[var(--primary-300)]"
-              >
-                {t("home.discoverPlatform")}
-              </a>
+              </button>
             </div>
           </motion.div>
 

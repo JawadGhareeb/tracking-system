@@ -4,8 +4,8 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { authApiService } from "@/services/api.auth.service";
 import {
-  removeAuthTokenCookie,
-  setAuthTokenCookie,
+  clearAuthSession,
+  persistAuthSession,
 } from "@/services/auth-cookie";
 import { useToast } from "@/components/ui/toast";
 import { getUserDisplayName, normalizeUser } from "@/lib/normalize-api";
@@ -32,7 +32,7 @@ export function useAuth() {
     try {
       const response = await authApiService.login(credentials);
       const normalizedUser = normalizeUser(response.user);
-      setAuthTokenCookie(response.token);
+      await persistAuthSession(response);
       setProfile(normalizedUser);
       showSuccessToast({
         title: t("notifications.auth.loginSuccessTitle"),
@@ -65,7 +65,7 @@ export function useAuth() {
     try {
       const response = await authApiService.register(payload);
       const normalizedUser = normalizeUser(response.user);
-      setAuthTokenCookie(response.token);
+      await persistAuthSession(response);
       setProfile(normalizedUser);
       showSuccessToast({
         title: t("notifications.auth.registerSuccessTitle"),
@@ -105,7 +105,7 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(() => {
-    removeAuthTokenCookie();
+    void clearAuthSession();
     setProfile(null);
     showInfoToast({
       title: t("notifications.auth.logoutTitle"),

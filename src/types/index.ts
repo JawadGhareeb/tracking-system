@@ -39,9 +39,21 @@ export interface ILoginRequest {
   password: string;
 }
 
-export interface ILoginResponse {
-  message: string;
+export interface IAuthTokenBundle {
   token: string;
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresIn: number;
+  refreshTokenExpiresIn: number;
+}
+
+export interface ILoginResponse extends IAuthTokenBundle {
+  message: string;
+  user: IUser;
+}
+
+export interface IRefreshTokenResponse extends IAuthTokenBundle {
+  message: string;
   user: IUser;
 }
 

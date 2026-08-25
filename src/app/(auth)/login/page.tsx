@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/hook/use-auth";
+import { isAdminRoleName, isEmployeeRoleName } from "@/lib/role-access";
 
 interface ILoginErrors {
   email?: string;
@@ -62,7 +63,14 @@ export default function LoginPage() {
       return;
     }
 
-    router.replace("/");
+    const roleName = response.user?.role?.name;
+    if (isAdminRoleName(roleName)) {
+      router.replace("/dashboard");
+    } else if (isEmployeeRoleName(roleName)) {
+      router.replace("/employee/orders");
+    } else {
+      router.replace("/");
+    }
   };
 
   return (

@@ -58,6 +58,7 @@ export default function NewEmployeePage() {
       email: "",
       username: "",
       password: "",
+      salary: "",
       role: "",
     },
   });
@@ -75,6 +76,7 @@ export default function NewEmployeePage() {
         email: values.email.trim(),
         username: values.username.trim(),
         password: values.password,
+        salary: values.salary && values.salary.trim() !== "" ? Number(values.salary) : 0,
         role: values.role,
       });
 
@@ -194,6 +196,19 @@ export default function NewEmployeePage() {
                       <FormLabel>{t("employeeForm.fields.password")}</FormLabel>
                       <FormControl>
                         <Input type="password" placeholder={t("employeeForm.placeholders.password")} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="salary"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("employeeForm.fields.salary")}</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" placeholder={t("employeeForm.placeholders.salary")} {...field} value={field.value ?? ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

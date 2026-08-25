@@ -1,10 +1,68 @@
-﻿import { API_BASE_URL } from "@/constant/endpoints";
-import { getAuthTokenCookie } from "@/services/auth-cookie";
+﻿import { API_BASE_URL, APP_AUTH_ENDPOINTS } from "@/constant/endpoints";
+import { clearAuthSession, getAuthTokenCookie } from "@/services/auth-cookie";
 import i18n from "@/lib/i18n";
 
 type QueryValue = string | number | boolean | null | undefined;
 
 type TokenResolver = () => string | null | Promise<string | null>;
+
+interface IRefreshResponse {
+  accessToken?: string;
+  code?: string;
+}
+
+type RefreshResult =
+  | { status: "refreshed"; accessToken: string }
+  | { status: "expired" }
+  | { status: "unavailable" };
+
+let refreshPromise: Promise<RefreshResult> | null = null;
+
+async function refreshAccessToken(): Promise<RefreshResult> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async (): Promise<RefreshResult> => {
+    const language = i18n.resolvedLanguage?.toLowerCase().startsWith("en") ? "en" : "ar";
+    let response: Response;
+    try {
+      response = await fetch(APP_AUTH_ENDPOINTS.refresh, {
+        method: "POST",
+        headers: { "Accept-Language": language },
+        cache: "no-store",
+      });
+    } catch {
+      return { status: "unavailable" };
+    }
+
+    let data: IRefreshResponse = {};
+    try {
+      data = (await response.json()) as IRefreshResponse;
+    } catch {
+      // Fall through to status handling.
+    }
+
+    if (response.ok && data.accessToken) {
+      return { status: "refreshed", accessToken: data.accessToken };
+    }
+
+    if (response.status === 401 || data.code === "SESSION_EXPIRED") {
+      await clearAuthSession();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("auth:session-expired"));
+        window.location.assign("/login");
+      }
+      return { status: "expired" };
+    }
+
+    return { status: "unavailable" };
+  })().finally(() => {
+    refreshPromise = null;
+  });
+
+  return refreshPromise;
+}
 
 interface IRequestOptions<TBody = unknown>
   extends Omit<RequestInit, "method" | "body" | "headers"> {
@@ -60,7 +118,8 @@ async function toApiError(response: Response): Promise<Error> {
 export function createApiClient(tokenResolver?: TokenResolver) {
   async function request<TResponse, TBody = unknown>(
     endpoint: string,
-    options: IRequestOptions<TBody> = {}
+    options: IRequestOptions<TBody> = {},
+    hasRetriedAfterRefresh = false
   ): Promise<TResponse> {
     const {
       method = "GET",
@@ -101,6 +160,21 @@ export function createApiClient(tokenResolver?: TokenResolver) {
       cache: "no-store",
       ...rest,
     });
+
+    if (response.status === 401 && auth && !hasRetriedAfterRefresh && token === undefined) {
+      const refreshResult = await refreshAccessToken();
+      if (refreshResult.status === "refreshed") {
+        return request<TResponse, TBody>(
+          endpoint,
+          { ...options, token: refreshResult.accessToken },
+          true
+        );
+      }
+      if (refreshResult.status === "expired") {
+        throw new Error(i18n.t("apiErrors.sessionExpired"));
+      }
+      throw new Error(i18n.t("apiErrors.refreshUnavailable"));
+    }
 
     if (!response.ok) {
       throw await toApiError(response);

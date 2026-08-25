@@ -182,6 +182,8 @@ const resources = {
         heroDescription:
           "نظّم الطلبات، تابع فريق العمل، وراقب المراحل لحظة بلحظة. كل شيء واضح، أنيق، وسريع حتى تكبّر شغلك بثقة.",
         startNow: "ابدأ الآن",
+        loginRequiredTitle: "تسجيل الدخول مطلوب",
+        loginRequiredDescription: "أنت غير مسجل الدخول. سجل الدخول للمتابعة.",
         discoverPlatform: "اكتشف المنصة",
         flowTag: "تدفق واضح",
         flowText: "من الطلب للتسليم بدون فوضى",
@@ -214,7 +216,8 @@ const resources = {
         storage: "مرحلة التخزين",
         delivery: "مرحلة التسليم",
       },
-      apiErrors: { requestFailed: "فشل تنفيذ الطلب. رمز الحالة: {{status}}" },
+      apiErrors: { requestFailed: "فشل تنفيذ الطلب. رمز الحالة: {{status}}", sessionExpired: "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى.", refreshUnavailable: "تعذر تجديد الجلسة مؤقتًا. حاول مرة أخرى." },
+      employeePortal: { workOrders: "طلبات العمل", profile: "الملف الشخصي", badge: "منطقة الموظف", title: "الطلبات المسندة إليّ", description: "تابع الطلبات التي أسندتها الإدارة إليك والمرحلة الحالية لكل طلب.", empty: "لا توجد طلبات مسندة إليك حاليًا.", loadFailed: "تعذر تحميل الطلبات المسندة إليك", details: "تفاصيل الطلب", orderDate: "تاريخ الطلب", customer: "الزبون", deadline: "موعد الانتهاء", materialsCount: "عدد المواد", detailsBadge: "طلب مسند", detailsTitle: "تفاصيل طلب العمل", back: "العودة إلى طلبات العمل", progress: "مرحلة تنفيذ الطلب", information: "معلومات العمل", descriptionLabel: "الوصف", notes: "الملاحظات", expectedFinish: "موعد الانتهاء المتوقع", address: "عنوان التسليم", city: "المدينة", deliveryNotes: "ملاحظات التسليم", rawMaterials: "المواد الخام المطلوبة", quantity: "الكمية", noMaterials: "لا توجد مواد خام مرتبطة بهذا الطلب.", notSpecified: "غير محدد", checkingAccess: "جاري التحقق من صلاحية الموظف..." },
       customerMenu: { profile: "الملف الشخصي", myOrders: "طلباتي", addOrder: "إضافة طلب" },
       customerProfile: { badge: "حسابي", title: "الملف الشخصي", personalInfo: "المعلومات الشخصية", firstName: "الاسم الأول", lastName: "الاسم الأخير", email: "البريد الإلكتروني", username: "اسم المستخدم", newPasswordOptional: "كلمة المرور الجديدة (اختياري)", edit: "تعديل المعلومات", save: "حفظ", cancel: "إلغاء", myOrders: "طلباتي", addOrder: "إضافة طلب", loadingFailed: "تعذر تحميل الملف الشخصي", updateSuccess: "تم تحديث معلوماتك", updateFailed: "تعذر تحديث المعلومات", unavailable: "تعذر تحميل الملف الشخصي." },
       myOrders: { badge: "حسابي", title: "طلباتي", description: "تابع حالة كل طلب من لحظة الإرسال حتى التسليم.", profile: "الملف الشخصي", addOrder: "إضافة طلب", addFirstOrder: "إضافة أول طلب", empty: "ما عندك طلبات حتى الآن.", orderDate: "تاريخ الطلب", materialsCount: "عدد المواد", cost: "التكلفة", deliveryDate: "موعد التسليم", waitingAdmin: "بانتظار تحديد الإدارة", details: "تفاصيل الطلب", loadFailed: "تعذر تحميل طلباتك" },
@@ -426,6 +429,7 @@ const resources = {
           email: "أدخل البريد الإلكتروني",
           username: "أدخل اسم المستخدم",
           password: "8 أحرف على الأقل",
+          salary: "مثال: 5000",
           keepCurrentPassword: "اتركها فارغة للإبقاء على كلمة المرور الحالية",
         },
       },
@@ -662,6 +666,8 @@ const resources = {
         heroDescription:
           "Organize orders, track your team, and monitor every stage in real time. Clear, elegant, and fast so you can grow with confidence.",
         startNow: "Get started",
+        loginRequiredTitle: "Login required",
+        loginRequiredDescription: "You are not signed in. Log in to continue.",
         discoverPlatform: "Explore platform",
         flowTag: "Clear flow",
         flowText: "From order to delivery without chaos",
@@ -694,7 +700,8 @@ const resources = {
         storage: "Storage",
         delivery: "Delivery",
       },
-      apiErrors: { requestFailed: "Request failed. Status code: {{status}}" },
+      apiErrors: { requestFailed: "Request failed. Status code: {{status}}", sessionExpired: "Your session has expired. Please log in again.", refreshUnavailable: "Unable to refresh your session right now. Please try again." },
+      employeePortal: { workOrders: "Work orders", profile: "Profile", badge: "Employee area", title: "Orders assigned to me", description: "Track orders assigned to you by management and the current stage of each order.", empty: "No orders are currently assigned to you.", loadFailed: "Unable to load your assigned orders", details: "Order details", orderDate: "Order date", customer: "Customer", deadline: "Due date", materialsCount: "Materials", detailsBadge: "Assigned order", detailsTitle: "Work order details", back: "Back to work orders", progress: "Order progress", information: "Work information", descriptionLabel: "Description", notes: "Notes", expectedFinish: "Expected finish", address: "Delivery address", city: "City", deliveryNotes: "Delivery notes", rawMaterials: "Required raw materials", quantity: "Quantity", noMaterials: "No raw materials are linked to this order.", notSpecified: "Not specified", checkingAccess: "Checking employee access..." },
       customerMenu: { profile: "Profile", myOrders: "My orders", addOrder: "Add order" },
       customerProfile: { badge: "My account", title: "Profile", personalInfo: "Personal information", firstName: "First name", lastName: "Last name", email: "Email", username: "Username", newPasswordOptional: "New password (optional)", edit: "Edit information", save: "Save", cancel: "Cancel", myOrders: "My orders", addOrder: "Add order", loadingFailed: "Unable to load profile", updateSuccess: "Your information was updated", updateFailed: "Unable to update information", unavailable: "Unable to load profile." },
       myOrders: { badge: "My account", title: "My orders", description: "Track every order from submission through delivery.", profile: "Profile", addOrder: "Add order", addFirstOrder: "Add first order", empty: "You do not have any orders yet.", orderDate: "Order date", materialsCount: "Materials count", cost: "Cost", deliveryDate: "Delivery date", waitingAdmin: "Waiting for admin assignment", details: "Order details", loadFailed: "Unable to load your orders" },
@@ -906,6 +913,7 @@ const resources = {
           email: "Enter email",
           username: "Enter username",
           password: "At least 8 characters",
+          salary: "Example: 5000",
           keepCurrentPassword: "Leave empty to keep the current password",
         },
       },
@@ -986,8 +994,20 @@ export function applyDocumentLanguage(language: string) {
   document.documentElement.dir = normalized === "ar" ? "rtl" : "ltr";
 }
 
+function syncResourceBundles() {
+  (["ar", "en"] as const).forEach((language) => {
+    i18n.addResourceBundle(
+      language,
+      "translation",
+      resources[language].translation,
+      true,
+      true
+    );
+  });
+}
+
 if (!i18n.isInitialized) {
-  i18n.use(initReactI18next).init({
+  void i18n.use(initReactI18next).init({
     resources,
     lng: getInitialLanguage(),
     fallbackLng: "ar",
@@ -999,6 +1019,11 @@ if (!i18n.isInitialized) {
       useSuspense: false,
     },
   });
+} else {
+  // i18next is a singleton. During Next.js Fast Refresh the module can be
+  // re-evaluated while the existing instance stays initialized. Refresh the
+  // in-memory bundles so newly added/edited translations are available now.
+  syncResourceBundles();
 }
 
 export default i18n;

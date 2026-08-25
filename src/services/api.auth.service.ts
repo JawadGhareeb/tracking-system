@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "@/constant/endpoints";
 import { apiClient } from "@/services/api-client";
-import { ILoginRequest, ILoginResponse, IRegisterRequest, IUser } from "@/types";
+import { ILoginRequest, ILoginResponse, IRefreshTokenResponse, IRegisterRequest, IUser } from "@/types";
 
 export const authApiService = {
   login(payload: ILoginRequest) {
@@ -13,6 +13,13 @@ export const authApiService = {
   register(payload: IRegisterRequest) {
     return apiClient.post<ILoginResponse, IRegisterRequest>(API_ENDPOINTS.auth.register, {
       body: payload,
+      auth: false,
+    });
+  },
+
+  refresh(refreshToken: string) {
+    return apiClient.post<IRefreshTokenResponse, { refreshToken: string }>(API_ENDPOINTS.auth.refresh, {
+      body: { refreshToken },
       auth: false,
     });
   },

@@ -15,6 +15,11 @@ export function createEmployeeFormSchema(t: Translator) {
       .max(100, t("authPages.validation.emailMax")),
     username: z.string().trim().min(1, t("authPages.validation.usernameRequired")),
     password: z.string().trim().min(8, t("authPages.validation.passwordMin")),
+    salary: z
+      .string()
+      .trim()
+      .optional()
+      .refine((value) => value === undefined || value === "" || (!Number.isNaN(Number(value)) && Number(value) >= 0), t("employeeSchema.invalidSalary")),
     role: z
       .string()
       .trim()

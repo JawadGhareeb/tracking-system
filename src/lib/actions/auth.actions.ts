@@ -3,15 +3,20 @@
 import { ILoginRequest } from "@/types";
 import { authApiService } from "@/services/api.auth.service";
 import {
-  clearServerAuthToken,
-  setServerAuthToken,
+  clearServerAuthTokens,
+  setServerAuthTokens,
 } from "@/services/auth-cookie.server";
 
 export async function handleLogin(credentials: ILoginRequest) {
   try {
     const response = await authApiService.login(credentials);
-    if (response.token) {
-      await setServerAuthToken(response.token);
+    if (response.accessToken && response.refreshToken) {
+      await setServerAuthTokens(
+        response.accessToken,
+        response.refreshToken,
+        response.accessTokenExpiresIn,
+        response.refreshTokenExpiresIn
+      );
       return { success: true };
     }
 
@@ -36,5 +41,5 @@ export async function handleLogin(credentials: ILoginRequest) {
 
 export async function handelLogOut() {
   "use server";
-  await clearServerAuthToken();
+  await clearServerAuthTokens();
 }

@@ -31,6 +31,8 @@ export const ordersApiService = {
   remove(id: string) { return apiClient.delete<{ message: string }>(API_ENDPOINTS.orders.byId(id)); },
   getMyOrders(page = 1, perPage = 12) { return apiClient.get<IOrdersResponse>(API_ENDPOINTS.orders.my, { query: { page, perPage } }); },
   getMyOrderById(id: string) { return apiClient.get<IOrder>(API_ENDPOINTS.orders.myById(id)); },
+  getAssignedOrders(page = 1, perPage = 50) { return apiClient.get<IOrdersResponse>(API_ENDPOINTS.orders.assigned, { query: { page, perPage } }); },
+  getAssignedOrderById(id: string) { return apiClient.get<IOrder>(API_ENDPOINTS.orders.assignedById(id)); },
   createMyOrder(payload: ICreateMyOrderPayload) { return apiClient.post<IOrder, ICreateMyOrderPayload>(API_ENDPOINTS.orders.my, { body: payload }); },
   assign(id: string, payload: IAssignOrderPayload) { return apiClient.patch<IOrder, IAssignOrderPayload>(API_ENDPOINTS.orders.assignment(id), { body: payload }); },
   updateStatus(id: string, status: OrderStatus) {
