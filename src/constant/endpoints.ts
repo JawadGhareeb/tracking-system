@@ -1,4 +1,4 @@
-const FALLBACK_API_BASE_URL = "https://tracking-back-07ex.onrender.com/api";
+const FALLBACK_API_BASE_URL = "https://tracking-back-tyyq.vercel.app/api";
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
@@ -22,6 +22,11 @@ export const API_ENDPOINTS = {
   roles: {
     list: "/roles",
     byId: (id: string) => `/roles/${id}`,
+  },
+  rawMaterials: {
+    list: "/raw-materials",
+    available: "/raw-materials/available",
+    byId: (id: string) => `/raw-materials/${id}`,
   },
   orders: {
     list: "/orders",

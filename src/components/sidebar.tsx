@@ -143,6 +143,11 @@ export function Sidebar() {
       icon: Icons.orders,
     },
     {
+      name: "المواد الخام",
+      href: "/raw-materials",
+      icon: Icons.fileText,
+    },
+    {
       name: t("sidebar.roles"),
       href: "/roles",
       icon: Icons.briefcase,

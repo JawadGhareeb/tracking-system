@@ -88,6 +88,40 @@ export interface IUpdateRolePayload {
   description?: string | null;
 }
 
+export type RawMaterialCategory = "FABRIC" | "THREAD" | "ACCESSORY" | "OTHER";
+export type RawMaterialUnit = "PIECE" | "METER" | "KILOGRAM" | "ROLL" | "UNIT";
+
+export interface IRawMaterial {
+  _id: string;
+  name: string;
+  category: RawMaterialCategory;
+  color: string;
+  unit: RawMaterialUnit;
+  stockQuantity: number;
+  reservedQuantity: number;
+  availableQuantity: number;
+  unitPrice: number;
+  minimumStock: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface IRawMaterialsResponse {
+  items: IRawMaterial[];
+  pagination: IPagination;
+}
+
+export interface IRawMaterialPayload {
+  name: string;
+  category: RawMaterialCategory;
+  color?: string;
+  unit: RawMaterialUnit;
+  stockQuantity: number;
+  unitPrice: number;
+  minimumStock?: number;
+  isActive?: boolean;
+}
+
 export type OrderStatus =
   | "PENDING"
   | "CUTTING"
