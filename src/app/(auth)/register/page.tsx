@@ -8,12 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/hook/use-auth";
-import { ROLE_IDS } from "@/constant/roles";
 
 interface IRegisterErrors {
   firstName?: string;
   lastName?: string;
-  username?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -26,7 +24,6 @@ export default function RegisterPage() {
   const { register, isLoading } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,7 +34,6 @@ export default function RegisterPage() {
     const nextErrors: IRegisterErrors = {};
     const normalizedFirstName = firstName.trim();
     const normalizedLastName = lastName.trim();
-    const normalizedUsername = username.trim();
     const normalizedEmail = email.trim();
     const normalizedPassword = password.trim();
     const normalizedConfirmPassword = confirmPassword.trim();
@@ -48,12 +44,6 @@ export default function RegisterPage() {
 
     if (!normalizedLastName) {
       nextErrors.lastName = t("authPages.validation.lastNameRequired");
-    }
-
-    if (!normalizedUsername) {
-      nextErrors.username = t("authPages.validation.usernameRequired");
-    } else if (normalizedUsername.length < 2) {
-      nextErrors.username = t("authPages.validation.usernameMin");
     }
 
     if (!normalizedEmail) {
@@ -89,9 +79,8 @@ export default function RegisterPage() {
         lastName: normalizedLastName,
       },
       email: normalizedEmail,
-      username: normalizedUsername,
       password: normalizedPassword,
-      role: ROLE_IDS.USER,
+      confirmPassword: normalizedConfirmPassword,
     });
 
     if (!response.success) {
@@ -155,27 +144,6 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="username" className="block text-right text-sm font-medium">
-            {t("authPages.fields.username")}
-          </label>
-          <Input
-            id="username"
-            type="text"
-            placeholder={t("authPages.register.usernamePlaceholder")}
-            value={username}
-            onChange={(event) => {
-              setUsername(event.target.value);
-              setErrors((previous) => ({ ...previous, username: undefined, general: undefined }));
-            }}
-            required
-            className={`text-right ${
-              errors.username ? "border-[var(--danger)] focus-visible:ring-[var(--danger)]" : ""
-            }`}
-          />
-          {errors.username ? <p className="text-right text-xs text-[var(--danger)]">{errors.username}</p> : null}
-        </div>
-
-        <div className="space-y-2">
           <label htmlFor="email" className="block text-right text-sm font-medium">
             {t("authPages.fields.email")}
           </label>
@@ -227,6 +195,7 @@ export default function RegisterPage() {
             id="confirmPassword"
             placeholder={t("authPages.register.confirmPasswordPlaceholder")}
             value={confirmPassword}
+            minLength={8}
             onChange={(event) => {
               setConfirmPassword(event.target.value);
               setErrors((previous) => ({ ...previous, confirmPassword: undefined, general: undefined }));

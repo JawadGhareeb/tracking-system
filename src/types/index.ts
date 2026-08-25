@@ -48,10 +48,8 @@ export interface ILoginResponse {
 export interface IRegisterRequest {
   fullName: IFullName;
   email: string;
-  username: string;
   password: string;
-  role: string;
-  salary?: number;
+  confirmPassword: string;
 }
 
 export interface IUsersResponse {
