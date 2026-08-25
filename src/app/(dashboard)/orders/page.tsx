@@ -46,9 +46,12 @@ import { IOrder, IUserBrief, OrderListStatusFilter } from "@/types";
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-[var(--secondary-200)] text-[var(--secondary-500)]",
-  IN_PROGRESS: "bg-[var(--primary-200)] text-[var(--primary-400)]",
-  COMPLETED: "bg-[var(--primary-100)] text-[var(--primary-400)]",
-  CANCELLED: "bg-[#ffe8e8] text-[#d04242]",
+  CUTTING: "bg-[var(--primary-100)] text-[var(--primary-400)]",
+  SEWING: "bg-[var(--primary-200)] text-[var(--primary-400)]",
+  PRINTING: "bg-[var(--secondary-100)] text-[var(--secondary-500)]",
+  PACKAGING: "bg-[var(--accent-100)] text-[var(--primary-400)]",
+  STORAGE: "bg-[var(--white-100)] text-[var(--black-300)]",
+  DELIVERY: "bg-[#ddf6e8] text-[#2b9b5c]",
 };
 
 export default function OrdersPage() {
@@ -77,16 +80,22 @@ export default function OrdersPage() {
   const [briefUsersError, setBriefUsersError] = useState<string | null>(null);
   const statusLabels: Record<string, string> = {
     PENDING: t("orderStatus.pending"),
-    IN_PROGRESS: t("orderStatus.inProgress"),
-    COMPLETED: t("orderStatus.completed"),
-    CANCELLED: t("orderStatus.cancelled"),
+    CUTTING: t("orderStatus.cutting"),
+    SEWING: t("orderStatus.sewing"),
+    PRINTING: t("orderStatus.printing"),
+    PACKAGING: t("orderStatus.packaging"),
+    STORAGE: t("orderStatus.storage"),
+    DELIVERY: t("orderStatus.delivery"),
   };
 
   const orderStatusOptions: Array<{ value: OrderListStatusFilter; label: string }> = [
     { value: "PENDING", label: t("orderStatus.pending") },
-    { value: "IN_PROGRESS", label: t("orderStatus.inProgress") },
-    { value: "COMPLETED", label: t("orderStatus.completed") },
-    { value: "CANCELLED", label: t("orderStatus.cancelled") },
+    { value: "CUTTING", label: t("orderStatus.cutting") },
+    { value: "SEWING", label: t("orderStatus.sewing") },
+    { value: "PRINTING", label: t("orderStatus.printing") },
+    { value: "PACKAGING", label: t("orderStatus.packaging") },
+    { value: "STORAGE", label: t("orderStatus.storage") },
+    { value: "DELIVERY", label: t("orderStatus.delivery") },
   ];
 
   const totalPages = useMemo(() => {
@@ -374,11 +383,15 @@ export default function OrdersPage() {
                     </TableCell>
                     <TableCell>{dayjs(order.createdAt).format("YYYY-MM-DD")}</TableCell>
                     <TableCell>
-                      {dayjs(order.expectedFinishDate).format("YYYY-MM-DD")}
+                      {order.expectedFinishDate
+                        ? dayjs(order.expectedFinishDate).format("YYYY-MM-DD")
+                        : "-"}
                     </TableCell>
                     <TableCell>{order.cost.toLocaleString()}</TableCell>
                     <TableCell>
-                      {order.employee.fullName.firstName} {order.employee.fullName.lastName}
+                      {order.employee
+                        ? `${order.employee.fullName.firstName} ${order.employee.fullName.lastName}`
+                        : "-"}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center gap-2">

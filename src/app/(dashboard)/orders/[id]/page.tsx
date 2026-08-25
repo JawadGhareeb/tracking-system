@@ -95,9 +95,12 @@ export default function EditOrderPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const orderStatuses = [
     { value: "PENDING", label: t("orderStatus.pending") },
-    { value: "IN_PROGRESS", label: t("orderStatus.inProgress") },
-    { value: "COMPLETED", label: t("orderStatus.completed") },
-    { value: "CANCELLED", label: t("orderStatus.cancelled") },
+    { value: "CUTTING", label: t("orderStatus.cutting") },
+    { value: "SEWING", label: t("orderStatus.sewing") },
+    { value: "PRINTING", label: t("orderStatus.printing") },
+    { value: "PACKAGING", label: t("orderStatus.packaging") },
+    { value: "STORAGE", label: t("orderStatus.storage") },
+    { value: "DELIVERY", label: t("orderStatus.delivery") },
   ];
 
   const userOptions = useMemo(
@@ -146,10 +149,12 @@ export default function EditOrderPage() {
 
         form.reset({
           customer: order.customer._id,
-          employee: order.employee._id,
+          employee: order.employee?._id || "",
           description: order.description,
           status: order.status,
-          expectedFinishDate: dayjs(order.expectedFinishDate).format("YYYY-MM-DD"),
+          expectedFinishDate: order.expectedFinishDate
+            ? dayjs(order.expectedFinishDate).format("YYYY-MM-DD")
+            : "",
           cost: String(order.cost),
           sizes: order.sizes.join(", "),
           colors: order.colors.join(", "),

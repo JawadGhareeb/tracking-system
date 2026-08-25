@@ -202,9 +202,12 @@ const resources = {
       },
       orderStatus: {
         pending: "قيد الانتظار",
-        inProgress: "قيد التنفيذ",
-        completed: "مكتمل",
-        cancelled: "ملغي",
+        cutting: "مرحلة القص",
+        sewing: "مرحلة الخياطة",
+        printing: "مرحلة الطباعة",
+        packaging: "مرحلة التغليف",
+        storage: "مرحلة التخزين",
+        delivery: "مرحلة التسليم",
       },
       dashboardHome: {
         badge: "لوحة التحكم الإبداعية",

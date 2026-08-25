@@ -2,9 +2,12 @@ import { IOrder, IRole, IUser, OrderStatus } from "@/types";
 
 const ORDER_STATUSES: OrderStatus[] = [
   "PENDING",
-  "IN_PROGRESS",
-  "COMPLETED",
-  "CANCELLED",
+  "CUTTING",
+  "SEWING",
+  "PRINTING",
+  "PACKAGING",
+  "STORAGE",
+  "DELIVERY",
 ];
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -93,9 +96,8 @@ export function normalizeUser(value: unknown, fallbackId = ""): IUser {
 }
 
 function normalizeOrderStatus(value: unknown): OrderStatus {
-  if (value === "DELIVERED") {
-    return "COMPLETED";
-  }
+  if (value === "COMPLETED" || value === "DELIVERED") return "DELIVERY";
+  if (value === "IN_PROGRESS") return "CUTTING";
 
   if (typeof value === "string" && ORDER_STATUSES.includes(value as OrderStatus)) {
     return value as OrderStatus;
@@ -115,7 +117,7 @@ export function normalizeOrder(value: unknown, fallbackId = ""): IOrder {
     status: normalizeOrderStatus(order.status),
     expectedFinishDate: toStringValue(order.expectedFinishDate, ""),
     cost: toNumberValue(order.cost, 0),
-    employee: normalizeUser(order.employee),
+    employee: order.employee ? normalizeUser(order.employee) : undefined,
     sizes: normalizeStringArray(order.sizes),
     colors: normalizeStringArray(order.colors),
     deliveryLocation: {
@@ -123,9 +125,9 @@ export function normalizeOrder(value: unknown, fallbackId = ""): IOrder {
       city: toStringValue(deliveryLocation.city, ""),
       notes: toStringValue(deliveryLocation.notes, ""),
     },
-    images: normalizeStringArray(order.images),
-    employeeSignature: toStringValue(order.employeeSignature, ""),
-    customerSignature: toStringValue(order.customerSignature, ""),
+    isCancelled: toBooleanValue(order.isCancelled, false),
+    cancelReason: toStringValue(order.cancelReason, ""),
+    deliveredAt: toStringValue(order.deliveredAt, ""),
     createdAt: toStringValue(order.createdAt, ""),
   };
 }

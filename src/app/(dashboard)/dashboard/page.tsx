@@ -48,10 +48,10 @@ export default function DashboardHomePage() {
   const totalUsers = usersPagination?.documentCount ?? 0;
   const totalOrders = ordersPagination?.documentCount ?? 0;
   const pendingOrders = orders.filter((order) => order.status === "PENDING").length;
-  const inProgressOrders = orders.filter(
-    (order) => order.status === "IN_PROGRESS"
+  const inProgressOrders = orders.filter((order) =>
+    ["CUTTING", "SEWING", "PRINTING", "PACKAGING", "STORAGE"].includes(order.status)
   ).length;
-  const completedOrders = orders.filter((order) => order.status === "COMPLETED").length;
+  const completedOrders = orders.filter((order) => order.status === "DELIVERY").length;
 
   const productivityRate =
     totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 0;

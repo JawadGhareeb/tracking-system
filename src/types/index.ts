@@ -90,15 +90,14 @@ export interface IUpdateRolePayload {
 
 export type OrderStatus =
   | "PENDING"
-  | "IN_PROGRESS"
-  | "COMPLETED"
-  | "CANCELLED";
+  | "CUTTING"
+  | "SEWING"
+  | "PRINTING"
+  | "PACKAGING"
+  | "STORAGE"
+  | "DELIVERY";
 
-export type OrderListStatusFilter =
-  | "PENDING"
-  | "IN_PROGRESS"
-  | "COMPLETED"
-  | "CANCELLED";
+export type OrderListStatusFilter = OrderStatus;
 
 export interface IDeliveryLocation {
   address: string;
@@ -111,15 +110,15 @@ export interface IOrder {
   customer: IUser;
   description: string;
   status: OrderStatus;
-  expectedFinishDate: string;
+  expectedFinishDate?: string;
   cost: number;
-  employee: IUser;
+  employee?: IUser;
   sizes: string[];
   colors: string[];
   deliveryLocation: IDeliveryLocation;
-  images: string[];
-  employeeSignature?: string;
-  customerSignature?: string;
+  isCancelled?: boolean;
+  cancelReason?: string;
+  deliveredAt?: string;
   createdAt: string;
 }
 
@@ -133,14 +132,11 @@ export interface ICreateOrderPayload {
   employee: string;
   description: string;
   status?: OrderStatus;
-  expectedFinishDate: string;
-  cost: number;
+  expectedFinishDate?: string;
+  cost?: number;
   sizes?: string[];
   colors?: string[];
-  deliveryLocation: IDeliveryLocation;
-  images?: File[];
-  employeeSignature?: File;
-  customerSignature?: File;
+  deliveryLocation?: IDeliveryLocation;
 }
 
 export interface IUpdateOrderPayload {
@@ -153,7 +149,6 @@ export interface IUpdateOrderPayload {
   sizes?: string[];
   colors?: string[];
   deliveryLocation?: Partial<IDeliveryLocation>;
-  images?: File[];
-  employeeSignature?: File;
-  customerSignature?: File;
+  isCancelled?: boolean;
+  cancelReason?: string;
 }

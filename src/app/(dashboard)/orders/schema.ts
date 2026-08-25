@@ -2,9 +2,12 @@ import { z } from "zod";
 
 export const ORDER_STATUS = [
   "PENDING",
-  "IN_PROGRESS",
-  "COMPLETED",
-  "CANCELLED",
+  "CUTTING",
+  "SEWING",
+  "PRINTING",
+  "PACKAGING",
+  "STORAGE",
+  "DELIVERY",
 ] as const;
 
 const objectIdPattern = /^[a-f\d]{24}$/i;
