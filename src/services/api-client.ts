@@ -1,5 +1,6 @@
 ﻿import { API_BASE_URL } from "@/constant/endpoints";
 import { getAuthTokenCookie } from "@/services/auth-cookie";
+import i18n from "@/lib/i18n";
 
 type QueryValue = string | number | boolean | null | undefined;
 
@@ -42,7 +43,7 @@ function isFormData(body: unknown): body is FormData {
 }
 
 async function toApiError(response: Response): Promise<Error> {
-  let message = `فشل تنفيذ الطلب. رمز الحالة: ${response.status}`;
+  let message = i18n.t("apiErrors.requestFailed", { status: response.status });
 
   try {
     const data = (await response.json()) as { message?: string };
@@ -75,6 +76,8 @@ export function createApiClient(tokenResolver?: TokenResolver) {
       token ?? (tokenResolver ? await tokenResolver() : getAuthTokenCookie());
 
     const requestHeaders = new Headers(headers);
+    const language = i18n.resolvedLanguage?.toLowerCase().startsWith("en") ? "en" : "ar";
+    requestHeaders.set("Accept-Language", language);
 
     if (auth && resolvedToken) {
       requestHeaders.set("Authorization", `Bearer ${resolvedToken}`);

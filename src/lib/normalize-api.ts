@@ -1,4 +1,5 @@
 import { IOrder, IOrderMaterial, IRawMaterial, IRole, IUser, OrderStatus } from "@/types";
+import i18n from "@/lib/i18n";
 
 const ORDER_STATUSES: OrderStatus[] = ["PENDING", "CUTTING", "SEWING", "PRINTING", "PACKAGING", "STORAGE", "DELIVERY"];
 
@@ -14,7 +15,7 @@ function normalizeStringArray(value: unknown): string[] {
 
 export function normalizeRole(value: unknown, fallbackId = ""): IRole {
   const role = asRecord(value);
-  return { _id: toStringValue(role._id, fallbackId), name: toStringValue(role.name, "غير محدد"), description: toStringValue(role.description, ""), createdAt: toStringValue(role.createdAt, "") };
+  return { _id: toStringValue(role._id, fallbackId), name: toStringValue(role.name, i18n.t("common.unspecified")), description: toStringValue(role.description, ""), createdAt: toStringValue(role.createdAt, "") };
 }
 
 function normalizeFullName(value: unknown) {
@@ -32,7 +33,7 @@ export function normalizeUser(value: unknown, fallbackId = ""): IUser {
 
 export function getUserDisplayName(user: unknown): string {
   const normalized = normalizeUser(user);
-  return `${normalized.fullName.firstName} ${normalized.fullName.lastName}`.trim() || normalized.username || normalized.email || "مستخدم";
+  return `${normalized.fullName.firstName} ${normalized.fullName.lastName}`.trim() || normalized.username || normalized.email || i18n.t("common.user");
 }
 
 export function normalizeRawMaterial(value: unknown, fallbackId = ""): IRawMaterial {
