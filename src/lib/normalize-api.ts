@@ -43,7 +43,7 @@ export function normalizeRawMaterial(value: unknown, fallbackId = ""): IRawMater
   return {
     _id: toStringValue(item._id, fallbackId),
     name: toStringValue(item.name, ""),
-    category: (["FABRIC", "THREAD", "ACCESSORY", "OTHER"].includes(String(item.category)) ? item.category : "OTHER") as IRawMaterial["category"],
+    category: (["FABRIC", "THREAD", "ACCESSORY"].includes(String(item.category)) ? item.category : "FABRIC") as IRawMaterial["category"],
     color: toStringValue(item.color, ""),
     unit: (["PIECE", "METER", "KILOGRAM", "ROLL", "UNIT"].includes(String(item.unit)) ? item.unit : "UNIT") as IRawMaterial["unit"],
     stockQuantity,

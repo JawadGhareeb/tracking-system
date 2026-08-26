@@ -151,7 +151,7 @@ export interface IDashboardSummary {
   lowStockMaterials: number;
 }
 
-export type RawMaterialCategory = "FABRIC" | "THREAD" | "ACCESSORY" | "OTHER";
+export type RawMaterialCategory = "FABRIC" | "THREAD" | "ACCESSORY";
 export type RawMaterialUnit = "PIECE" | "METER" | "KILOGRAM" | "ROLL" | "UNIT";
 
 export interface IRawMaterial {
