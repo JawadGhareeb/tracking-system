@@ -16,6 +16,7 @@ interface IOrdersQuery {
   page: number;
   perPage: number;
   status?: OrderListStatusFilter;
+  employeeId?: string;
   userId?: string;
   from?: string;
   to?: string;
@@ -72,6 +73,7 @@ export function useOrders(initialQuery?: Partial<IOrdersQuery>) {
     page: initialQuery?.page ?? 1,
     perPage: initialQuery?.perPage ?? 10,
     status: initialQuery?.status,
+    employeeId: initialQuery?.employeeId,
     userId: initialQuery?.userId,
     from: initialQuery?.from,
     to: initialQuery?.to,
@@ -221,6 +223,7 @@ export function useOrders(initialQuery?: Partial<IOrdersQuery>) {
     setQuery((previous) => ({
       page: 1,
       perPage: previous.perPage,
+      employeeId: previous.employeeId,
     }));
   }, []);
 

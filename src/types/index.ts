@@ -24,6 +24,7 @@ export interface IUser {
   username: string;
   role: IRole;
   salary: number;
+  assignedOrdersCount?: number;
   isActive: boolean;
   isDeleted: boolean;
   createdAt: string;

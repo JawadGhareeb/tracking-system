@@ -260,6 +260,7 @@ export default function EmployeesPage() {
                 <TableHead>{t("dashboardUsers.table.username")}</TableHead>
                 <TableHead>{t("dashboardUsers.table.role")}</TableHead>
                 <TableHead>{t("dashboardUsers.table.salary")}</TableHead>
+                <TableHead>{t("dashboardUsers.table.assignedOrders")}</TableHead>
                 <TableHead>{t("dashboardUsers.table.status")}</TableHead>
                 <TableHead className="text-center">{t("dashboardUsers.table.actions")}</TableHead>
               </TableRow>
@@ -284,10 +285,14 @@ export default function EmployeesPage() {
                       <Skeleton className="h-5 w-20" />
                     </TableCell>
                     <TableCell>
+                      <Skeleton className="h-5 w-16" />
+                    </TableCell>
+                    <TableCell>
                       <Skeleton className="h-7 w-24 rounded-full" />
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center gap-2">
+                        <Skeleton className="h-9 w-9 rounded-lg" />
                         <Skeleton className="h-9 w-9 rounded-lg" />
                         <Skeleton className="h-9 w-9 rounded-lg" />
                         <Skeleton className="h-9 w-9 rounded-lg" />
@@ -297,7 +302,7 @@ export default function EmployeesPage() {
                 ))
               ) : visibleUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-10 text-center">
+                  <TableCell colSpan={8} className="py-10 text-center">
                     {t("dashboardUsers.emptyEmployees")}
                   </TableCell>
                 </TableRow>
@@ -316,6 +321,11 @@ export default function EmployeesPage() {
                     </TableCell>
                     <TableCell>{user.salary.toLocaleString()}</TableCell>
                     <TableCell>
+                      <span className="inline-flex min-w-10 items-center justify-center rounded-full bg-[var(--secondary-100)] px-3 py-1 text-xs font-bold text-[var(--secondary-500)]">
+                        {user.assignedOrdersCount ?? 0}
+                      </span>
+                    </TableCell>
+                    <TableCell>
                       <span
                         className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
                           user.isActive
@@ -328,6 +338,14 @@ export default function EmployeesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => router.push(`/employees/${user._id}/orders`)}
+                          aria-label={t("dashboardUsers.aria.viewEmployeeOrders")}
+                        >
+                          <Icons.fileText className="h-5 w-5 text-[var(--secondary-400)]" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"

@@ -27,7 +27,7 @@ export function normalizeUser(value: unknown, fallbackId = ""): IUser {
   const user = asRecord(value);
   return {
     _id: toStringValue(user._id, fallbackId), fullName: normalizeFullName(user.fullName), email: toStringValue(user.email, ""), username: toStringValue(user.username, ""),
-    role: normalizeRole(user.role), salary: toNumberValue(user.salary, 0), isActive: toBooleanValue(user.isActive, false), isDeleted: toBooleanValue(user.isDeleted, false), createdAt: toStringValue(user.createdAt, ""),
+    role: normalizeRole(user.role), salary: toNumberValue(user.salary, 0), assignedOrdersCount: toNumberValue(user.assignedOrdersCount, 0), isActive: toBooleanValue(user.isActive, false), isDeleted: toBooleanValue(user.isDeleted, false), createdAt: toStringValue(user.createdAt, ""),
   };
 }
 
