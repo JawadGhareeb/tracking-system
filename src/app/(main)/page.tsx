@@ -195,7 +195,11 @@ export default function HomePage() {
 
       <header className="sticky top-0 z-40 border-b border-[var(--primary-100)]/90 bg-[var(--white)]/85 backdrop-blur-xl">
         <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="flex items-center gap-3 rounded-2xl outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--primary-200)]"
+            aria-label={t("common.appTitle")}
+          >
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--primary-300)] text-[var(--white)] shadow-[0_14px_30px_rgba(199,91,122,0.35)]">
               <Scissors className="h-5 w-5" />
             </div>
@@ -203,7 +207,7 @@ export default function HomePage() {
               <p className="text-sm font-semibold text-[var(--primary-400)]">{t("common.brand")}</p>
               <p className="text-lg font-bold">{t("common.appTitle")}</p>
             </div>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-3 rounded-2xl border border-[var(--primary-100)] bg-[var(--white)]/85 p-2 shadow-[0_8px_22px_rgba(0,0,0,0.08)]">
             <div ref={languageMenuRef} className="relative">
