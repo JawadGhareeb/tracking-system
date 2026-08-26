@@ -153,6 +153,11 @@ export function Sidebar() {
       icon: Icons.fileText,
     },
     {
+      name: t("sidebar.expenses"),
+      href: "/expenses",
+      icon: Icons.dollar,
+    },
+    {
       name: t("sidebar.roles"),
       href: "/roles",
       icon: Icons.briefcase,

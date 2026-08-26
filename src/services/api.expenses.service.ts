@@ -1,10 +1,18 @@
 import { API_ENDPOINTS } from "@/constant/endpoints";
 import { apiClient } from "@/services/api-client";
-import { IExpense, IExpensePayload, IExpensesResponse } from "@/types";
+import { ExpenseCategory, IExpense, IExpensePayload, IExpensesResponse } from "@/types";
+
+export interface IExpenseListQuery extends Record<string, string | number | boolean | null | undefined> {
+  page?: number;
+  perPage?: number;
+  month?: string;
+  category?: ExpenseCategory;
+  search?: string;
+}
 
 export const expensesApiService = {
-  getAll(month?: string) {
-    return apiClient.get<IExpensesResponse>(API_ENDPOINTS.expenses.list, { query: { page: 1, perPage: 100, month } });
+  getAll(query: IExpenseListQuery = {}) {
+    return apiClient.get<IExpensesResponse>(API_ENDPOINTS.expenses.list, { query });
   },
   create(payload: IExpensePayload) {
     return apiClient.post<IExpense, IExpensePayload>(API_ENDPOINTS.expenses.list, { body: payload });

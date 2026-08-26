@@ -118,9 +118,16 @@ export interface IExpensePayload {
   description?: string;
 }
 
+export interface IExpenseSummary {
+  monthTotal: number;
+  filteredTotal: number;
+  categoryTotals: Record<ExpenseCategory, number>;
+}
+
 export interface IExpensesResponse {
   items: IExpense[];
   pagination: IPagination;
+  summary: IExpenseSummary;
 }
 
 export interface IFinanceSummary {
