@@ -366,13 +366,18 @@ export default function OrdersPage() {
                       {order.customer.fullName.firstName} {order.customer.fullName.lastName}
                     </TableCell>
                     <TableCell>
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                          statusColors[order.status] || statusColors.PENDING
-                        }`}
-                      >
-                        {statusLabels[order.status] || order.status}
-                      </span>
+                      <div className="space-y-1">
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            statusColors[order.status] || statusColors.PENDING
+                          }`}
+                        >
+                          {statusLabels[order.status] || order.status}
+                        </span>
+                        {order.stageCompletionRequests.some((request) => request.status === "PENDING" && request.stage === order.status) ? (
+                          <p className="text-xs font-semibold text-[var(--secondary-500)]">{t("dashboardOrders.stageReviewPending")}</p>
+                        ) : null}
+                      </div>
                     </TableCell>
                     <TableCell>{dayjs(order.createdAt).format("YYYY-MM-DD")}</TableCell>
                     <TableCell>

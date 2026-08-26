@@ -215,6 +215,18 @@ export interface ICreateMyOrderPayload {
   deliveryLocation?: IDeliveryLocation;
 }
 
+export type StageCompletionStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface IStageCompletionRequest {
+  _id: string;
+  stage: OrderStatus;
+  employee: IUser;
+  status: StageCompletionStatus;
+  requestedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: IUser;
+}
+
 export interface IAssignOrderPayload {
   employee: string;
   expectedFinishDate: string;
@@ -240,6 +252,7 @@ export interface IOrder {
   isCancelled?: boolean;
   cancelReason?: string;
   deliveredAt?: string;
+  stageCompletionRequests: IStageCompletionRequest[];
   createdAt: string;
 }
 

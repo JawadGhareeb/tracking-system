@@ -177,7 +177,7 @@ export default function CustomersPage() {
                 onValueChange={(value) => {
                   setFilters({
                     orderByAlpha:
-                      value === "all" ? undefined : value === "1" ? 1 : 0,
+                      value === "all" ? undefined : value === "asc" ? "asc" : "desc",
                   });
                 }}
               >
@@ -186,8 +186,8 @@ export default function CustomersPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("dashboardUsers.defaultOrder")}</SelectItem>
-                  <SelectItem value="0">{t("dashboardUsers.ascOrder")}</SelectItem>
-                  <SelectItem value="1">{t("dashboardUsers.descOrder")}</SelectItem>
+                  <SelectItem value="asc">{t("dashboardUsers.ascOrder")}</SelectItem>
+                  <SelectItem value="desc">{t("dashboardUsers.descOrder")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

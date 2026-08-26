@@ -1,4 +1,4 @@
-import { IOrder, IOrderMaterial, IRawMaterial, IRole, IUser, OrderStatus } from "@/types";
+import { IOrder, IOrderMaterial, IRawMaterial, IRole, IStageCompletionRequest, IUser, OrderStatus } from "@/types";
 import i18n from "@/lib/i18n";
 
 const ORDER_STATUSES: OrderStatus[] = ["PENDING", "CUTTING", "SEWING", "PRINTING", "PACKAGING", "STORAGE", "DELIVERY"];
@@ -78,6 +78,29 @@ function normalizeOrderMaterials(value: unknown): IOrderMaterial[] {
   });
 }
 
+function normalizeStageCompletionRequests(value: unknown): IStageCompletionRequest[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((raw, index) => {
+    const item = asRecord(raw);
+    const employeeId = typeof item.employee === "string" ? item.employee : "";
+    const reviewedById = typeof item.reviewedBy === "string" ? item.reviewedBy : "";
+    const status = ["PENDING", "APPROVED", "REJECTED"].includes(String(item.status))
+      ? (item.status as IStageCompletionRequest["status"])
+      : "PENDING";
+    return {
+      _id: toStringValue(item._id, `stage-request-${index}`),
+      stage: normalizeOrderStatus(item.stage),
+      employee: typeof item.employee === "string" ? normalizeUser({ _id: employeeId }, employeeId) : normalizeUser(item.employee),
+      status,
+      requestedAt: toStringValue(item.requestedAt, ""),
+      reviewedAt: toStringValue(item.reviewedAt, "") || undefined,
+      reviewedBy: item.reviewedBy
+        ? (typeof item.reviewedBy === "string" ? normalizeUser({ _id: reviewedById }, reviewedById) : normalizeUser(item.reviewedBy))
+        : undefined,
+    };
+  });
+}
+
 export function normalizeOrder(value: unknown, fallbackId = ""): IOrder {
   const order = asRecord(value);
   const deliveryLocation = asRecord(order.deliveryLocation);
@@ -104,6 +127,7 @@ export function normalizeOrder(value: unknown, fallbackId = ""): IOrder {
     isCancelled: toBooleanValue(order.isCancelled, false),
     cancelReason: toStringValue(order.cancelReason, ""),
     deliveredAt: toStringValue(order.deliveredAt, ""),
+    stageCompletionRequests: normalizeStageCompletionRequests(order.stageCompletionRequests),
     createdAt: toStringValue(order.createdAt, ""),
   };
 }

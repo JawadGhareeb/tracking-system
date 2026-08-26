@@ -14,7 +14,7 @@ interface IUserListQuery {
   perPage?: number;
   minSalary?: number;
   maxSalary?: number;
-  orderByAlpha?: 0 | 1;
+  orderByAlpha?: "asc" | "desc";
   roleGroup?: "employee" | "customer";
 }
 

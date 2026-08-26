@@ -31,8 +31,12 @@ export const ordersApiService = {
   remove(id: string) { return apiClient.delete<{ message: string }>(API_ENDPOINTS.orders.byId(id)); },
   getMyOrders(page = 1, perPage = 12) { return apiClient.get<IOrdersResponse>(API_ENDPOINTS.orders.my, { query: { page, perPage } }); },
   getMyOrderById(id: string) { return apiClient.get<IOrder>(API_ENDPOINTS.orders.myById(id)); },
+  updateMyOrder(id: string, payload: ICreateMyOrderPayload) { return apiClient.put<IOrder, ICreateMyOrderPayload>(API_ENDPOINTS.orders.myById(id), { body: payload }); },
   getAssignedOrders(page = 1, perPage = 50) { return apiClient.get<IOrdersResponse>(API_ENDPOINTS.orders.assigned, { query: { page, perPage } }); },
   getAssignedOrderById(id: string) { return apiClient.get<IOrder>(API_ENDPOINTS.orders.assignedById(id)); },
+  requestStageCompletion(id: string) { return apiClient.post<IOrder, Record<string, never>>(API_ENDPOINTS.orders.stageCompletionRequest(id), { body: {} }); },
+  approveStageCompletion(id: string, requestId: string) { return apiClient.patch<IOrder, Record<string, never>>(API_ENDPOINTS.orders.stageCompletionApprove(id, requestId), { body: {} }); },
+  rejectStageCompletion(id: string, requestId: string) { return apiClient.patch<IOrder, Record<string, never>>(API_ENDPOINTS.orders.stageCompletionReject(id, requestId), { body: {} }); },
   createMyOrder(payload: ICreateMyOrderPayload) { return apiClient.post<IOrder, ICreateMyOrderPayload>(API_ENDPOINTS.orders.my, { body: payload }); },
   assign(id: string, payload: IAssignOrderPayload) { return apiClient.patch<IOrder, IAssignOrderPayload>(API_ENDPOINTS.orders.assignment(id), { body: payload }); },
   updateStatus(id: string, status: OrderStatus) {
