@@ -1,133 +1,39 @@
-import { IOrder, IOrderMaterial, IRawMaterial, IRole, IStageCompletionRequest, IUser, OrderStatus } from "@/types";
+import { IOrder, IOrderMaterial, IRawMaterial, IRole, IStageCompletionRequest, IUser, OrderStatus, ProductType, RoleGroup } from "@/types";
 import i18n from "@/lib/i18n";
 
-const ORDER_STATUSES: OrderStatus[] = ["PENDING", "CUTTING", "SEWING", "PRINTING", "PACKAGING", "STORAGE", "DELIVERY"];
-
-function asRecord(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" ? (value as Record<string, unknown>) : {};
-}
+const ORDER_STATUSES: OrderStatus[] = ["PENDING", "CUTTING", "SEWING", "PRINTING", "PACKAGING", "STORAGE", "DELIVERY", "DELIVERED"];
+function asRecord(value: unknown): Record<string, unknown> { return value && typeof value === "object" ? (value as Record<string, unknown>) : {}; }
 function toStringValue(value: unknown, fallback = ""): string { return typeof value === "string" ? value : fallback; }
 function toNumberValue(value: unknown, fallback = 0): number { return typeof value === "number" && Number.isFinite(value) ? value : fallback; }
 function toBooleanValue(value: unknown, fallback = false): boolean { return typeof value === "boolean" ? value : fallback; }
-function normalizeStringArray(value: unknown): string[] {
-  return Array.isArray(value) ? value.map((item) => (typeof item === "string" ? item : "")).filter(Boolean) : [];
-}
+function normalizeStringArray(value: unknown): string[] { return Array.isArray(value) ? value.map((item) => (typeof item === "string" ? item : "")).filter(Boolean) : []; }
+function normalizeStringRecord(value: unknown): Record<string, string> { const record = asRecord(value); return Object.fromEntries(Object.entries(record).filter(([, item]) => typeof item === "string")) as Record<string, string>; }
+function normalizeNumberRecord(value: unknown): Record<string, number> { const record = asRecord(value); return Object.fromEntries(Object.entries(record).map(([key, item]) => [key, toNumberValue(item, 0)])); }
+function normalizeBooleanRecord(value: unknown): Record<string, boolean> { const record = asRecord(value); return Object.fromEntries(Object.entries(record).map(([key, item]) => [key, toBooleanValue(item, false)])); }
 
 export function normalizeRole(value: unknown, fallbackId = ""): IRole {
   const role = asRecord(value);
-  return { _id: toStringValue(role._id, fallbackId), name: toStringValue(role.name, i18n.t("common.unspecified")), description: toStringValue(role.description, ""), createdAt: toStringValue(role.createdAt, "") };
+  const roleName = toStringValue(role.name, "").toLowerCase();
+  const inferredGroup: RoleGroup = roleName.includes("admin") || roleName.includes("أدمن") ? "ADMIN" : roleName.includes("customer") || roleName.includes("user") || roleName.includes("زبون") || roleName.includes("مستخدم") ? "CUSTOMER" : "EMPLOYEE";
+  const group = ["ADMIN", "EMPLOYEE", "CUSTOMER"].includes(String(role.group)) ? String(role.group) as RoleGroup : inferredGroup;
+  return { _id: toStringValue(role._id, fallbackId), name: toStringValue(role.name, i18n.t("common.unspecified")), description: toStringValue(role.description, ""), group, createdAt: toStringValue(role.createdAt, "") };
 }
-
-function normalizeFullName(value: unknown) {
-  const fullName = asRecord(value);
-  return { firstName: toStringValue(fullName.firstName, ""), lastName: toStringValue(fullName.lastName, "") };
-}
-
+function normalizeFullName(value: unknown) { const fullName = asRecord(value); return { firstName: toStringValue(fullName.firstName, ""), lastName: toStringValue(fullName.lastName, "") }; }
 export function normalizeUser(value: unknown, fallbackId = ""): IUser {
   const user = asRecord(value);
-  return {
-    _id: toStringValue(user._id, fallbackId), fullName: normalizeFullName(user.fullName), email: toStringValue(user.email, ""), username: toStringValue(user.username, ""),
-    role: normalizeRole(user.role), salary: toNumberValue(user.salary, 0), assignedOrdersCount: toNumberValue(user.assignedOrdersCount, 0), isActive: toBooleanValue(user.isActive, false), isDeleted: toBooleanValue(user.isDeleted, false), createdAt: toStringValue(user.createdAt, ""),
-  };
+  return { _id: toStringValue(user._id, fallbackId), fullName: normalizeFullName(user.fullName), email: toStringValue(user.email, ""), phoneNumber: toStringValue(user.phoneNumber, "") || null, username: toStringValue(user.username, ""), role: normalizeRole(user.role), salary: toNumberValue(user.salary, 0), assignedOrdersCount: toNumberValue(user.assignedOrdersCount, 0), isActive: toBooleanValue(user.isActive, false), isDeleted: toBooleanValue(user.isDeleted, false), createdAt: toStringValue(user.createdAt, "") };
 }
-
-export function getUserDisplayName(user: unknown): string {
-  const normalized = normalizeUser(user);
-  return `${normalized.fullName.firstName} ${normalized.fullName.lastName}`.trim() || normalized.username || normalized.email || i18n.t("common.user");
-}
+export function getUserDisplayName(user: unknown): string { const normalized = normalizeUser(user); return `${normalized.fullName.firstName} ${normalized.fullName.lastName}`.trim() || normalized.username || normalized.email || i18n.t("common.user"); }
 
 export function normalizeRawMaterial(value: unknown, fallbackId = ""): IRawMaterial {
-  const item = asRecord(value);
-  const stockQuantity = toNumberValue(item.stockQuantity, 0);
-  const reservedQuantity = toNumberValue(item.reservedQuantity, 0);
-  return {
-    _id: toStringValue(item._id, fallbackId),
-    name: toStringValue(item.name, ""),
-    category: (["FABRIC", "THREAD", "ACCESSORY"].includes(String(item.category)) ? item.category : "FABRIC") as IRawMaterial["category"],
-    color: toStringValue(item.color, ""),
-    unit: (["PIECE", "METER", "KILOGRAM", "ROLL", "UNIT"].includes(String(item.unit)) ? item.unit : "UNIT") as IRawMaterial["unit"],
-    stockQuantity,
-    reservedQuantity,
-    availableQuantity: toNumberValue(item.availableQuantity, Math.max(0, stockQuantity - reservedQuantity)),
-    unitPrice: toNumberValue(item.unitPrice, 0),
-    minimumStock: toNumberValue(item.minimumStock, 0),
-    isActive: toBooleanValue(item.isActive, false),
-    createdAt: toStringValue(item.createdAt, ""),
-  };
+  const item = asRecord(value); const stockQuantity = toNumberValue(item.stockQuantity, 0); const reservedQuantity = toNumberValue(item.reservedQuantity, 0); const availableQuantity = toNumberValue(item.availableQuantity, Math.max(0, stockQuantity - reservedQuantity));
+  return { _id: toStringValue(item._id, fallbackId), name: toStringValue(item.name, ""), category: (["FABRIC", "THREAD", "ACCESSORY"].includes(String(item.category)) ? item.category : "FABRIC") as IRawMaterial["category"], color: toStringValue(item.color, ""), unit: (["PIECE", "METER", "KILOGRAM", "ROLL", "UNIT"].includes(String(item.unit)) ? item.unit : "UNIT") as IRawMaterial["unit"], stockQuantity, reservedQuantity, availableQuantity, unitPrice: toNumberValue(item.unitPrice, 0), minimumStock: toNumberValue(item.minimumStock, 0), availability: availableQuantity > 0 ? "AVAILABLE" : "UNAVAILABLE", createdAt: toStringValue(item.createdAt, "") };
 }
-
-function normalizeOrderStatus(value: unknown): OrderStatus {
-  if (value === "COMPLETED" || value === "DELIVERED") return "DELIVERY";
-  if (value === "IN_PROGRESS") return "CUTTING";
-  if (typeof value === "string" && ORDER_STATUSES.includes(value as OrderStatus)) return value as OrderStatus;
-  return "PENDING";
-}
-
-function normalizeOrderMaterials(value: unknown): IOrderMaterial[] {
-  if (!Array.isArray(value)) return [];
-  return value.map((raw, index) => {
-    const line = asRecord(raw);
-    return {
-      rawMaterial: normalizeRawMaterial(line.rawMaterial, `material-${index}`),
-      nameSnapshot: toStringValue(line.nameSnapshot, ""),
-      colorSnapshot: toStringValue(line.colorSnapshot, ""),
-      quantity: toNumberValue(line.quantity, 0),
-      unitPriceSnapshot: toNumberValue(line.unitPriceSnapshot, 0),
-      subtotal: toNumberValue(line.subtotal, 0),
-    };
-  });
-}
-
-function normalizeStageCompletionRequests(value: unknown): IStageCompletionRequest[] {
-  if (!Array.isArray(value)) return [];
-  return value.map((raw, index) => {
-    const item = asRecord(raw);
-    const employeeId = typeof item.employee === "string" ? item.employee : "";
-    const reviewedById = typeof item.reviewedBy === "string" ? item.reviewedBy : "";
-    const status = ["PENDING", "APPROVED", "REJECTED"].includes(String(item.status))
-      ? (item.status as IStageCompletionRequest["status"])
-      : "PENDING";
-    return {
-      _id: toStringValue(item._id, `stage-request-${index}`),
-      stage: normalizeOrderStatus(item.stage),
-      employee: typeof item.employee === "string" ? normalizeUser({ _id: employeeId }, employeeId) : normalizeUser(item.employee),
-      status,
-      requestedAt: toStringValue(item.requestedAt, ""),
-      reviewedAt: toStringValue(item.reviewedAt, "") || undefined,
-      reviewedBy: item.reviewedBy
-        ? (typeof item.reviewedBy === "string" ? normalizeUser({ _id: reviewedById }, reviewedById) : normalizeUser(item.reviewedBy))
-        : undefined,
-    };
-  });
-}
+function normalizeOrderStatus(value: unknown): OrderStatus { if (value === "COMPLETED") return "DELIVERED"; if (value === "IN_PROGRESS") return "CUTTING"; if (typeof value === "string" && ORDER_STATUSES.includes(value as OrderStatus)) return value as OrderStatus; return "PENDING"; }
+function normalizeOrderMaterials(value: unknown): IOrderMaterial[] { if (!Array.isArray(value)) return []; return value.map((raw, index) => { const line = asRecord(raw); return { rawMaterial: normalizeRawMaterial(line.rawMaterial, `material-${index}`), nameSnapshot: toStringValue(line.nameSnapshot, ""), colorSnapshot: toStringValue(line.colorSnapshot, ""), quantity: toNumberValue(line.quantity, 0), unitPriceSnapshot: toNumberValue(line.unitPriceSnapshot, 0), subtotal: toNumberValue(line.subtotal, 0) }; }); }
+function normalizeStageCompletionRequests(value: unknown): IStageCompletionRequest[] { if (!Array.isArray(value)) return []; return value.map((raw, index) => { const item = asRecord(raw); const employeeId = typeof item.employee === "string" ? item.employee : ""; const reviewedById = typeof item.reviewedBy === "string" ? item.reviewedBy : ""; const status = ["PENDING", "APPROVED", "REJECTED"].includes(String(item.status)) ? (item.status as IStageCompletionRequest["status"]) : "PENDING"; return { _id: toStringValue(item._id, `stage-request-${index}`), stage: normalizeOrderStatus(item.stage), employee: typeof item.employee === "string" ? normalizeUser({ _id: employeeId }, employeeId) : normalizeUser(item.employee), status, requestedAt: toStringValue(item.requestedAt, ""), reviewedAt: toStringValue(item.reviewedAt, "") || undefined, reviewedBy: item.reviewedBy ? (typeof item.reviewedBy === "string" ? normalizeUser({ _id: reviewedById }, reviewedById) : normalizeUser(item.reviewedBy)) : undefined }; }); }
 
 export function normalizeOrder(value: unknown, fallbackId = ""): IOrder {
-  const order = asRecord(value);
-  const deliveryLocation = asRecord(order.deliveryLocation);
-  const rawMaterials = normalizeOrderMaterials(order.rawMaterials);
-  const legacyCost = toNumberValue(order.cost, 0);
-  const materialCost = toNumberValue(order.materialCost, rawMaterials.reduce((sum, line) => sum + line.subtotal, 0));
-  const additionalCost = toNumberValue(order.additionalCost, 0);
-  return {
-    _id: toStringValue(order._id, fallbackId),
-    customer: normalizeUser(order.customer),
-    description: toStringValue(order.description, ""),
-    notes: toStringValue(order.notes, ""),
-    rawMaterials,
-    status: normalizeOrderStatus(order.status),
-    expectedFinishDate: toStringValue(order.expectedFinishDate, "") || undefined,
-    materialCost,
-    additionalCost,
-    totalPrice: toNumberValue(order.totalPrice, legacyCost || materialCost + additionalCost),
-    cost: legacyCost,
-    employee: order.employee ? normalizeUser(order.employee) : undefined,
-    sizes: normalizeStringArray(order.sizes),
-    colors: normalizeStringArray(order.colors),
-    deliveryLocation: { address: toStringValue(deliveryLocation.address, ""), city: toStringValue(deliveryLocation.city, ""), notes: toStringValue(deliveryLocation.notes, "") },
-    isCancelled: toBooleanValue(order.isCancelled, false),
-    cancelReason: toStringValue(order.cancelReason, ""),
-    deliveredAt: toStringValue(order.deliveredAt, ""),
-    stageCompletionRequests: normalizeStageCompletionRequests(order.stageCompletionRequests),
-    createdAt: toStringValue(order.createdAt, ""),
-  };
+  const order = asRecord(value); const deliveryLocation = asRecord(order.deliveryLocation); const rawMaterials = normalizeOrderMaterials(order.rawMaterials); const legacyCost = toNumberValue(order.cost, 0); const materialCost = toNumberValue(order.materialCost, rawMaterials.reduce((sum, line) => sum + line.subtotal, 0)); const additionalCost = toNumberValue(order.additionalCost, 0); const configurationCost = toNumberValue(order.configurationCost, 0); const productType = ["BLOUSE", "SHIRT", "PANTS", "DRESS"].includes(String(order.productType)) ? String(order.productType) as ProductType : undefined;
+  return { _id: toStringValue(order._id, fallbackId), customer: normalizeUser(order.customer), description: toStringValue(order.description, ""), notes: toStringValue(order.notes, "") || null, productType, designAttributes: normalizeStringRecord(order.designAttributes), measurementMode: ["STANDARD", "CUSTOM"].includes(String(order.measurementMode)) ? order.measurementMode as "STANDARD" | "CUSTOM" : undefined, standardSize: toStringValue(order.standardSize, "") || null, measurements: normalizeNumberRecord(order.measurements), customizations: normalizeBooleanRecord(order.customizations), orderQuantity: toNumberValue(order.orderQuantity, 1), configurationUnitPrice: toNumberValue(order.configurationUnitPrice, 0), configurationCost, rawMaterials, status: normalizeOrderStatus(order.status), expectedFinishDate: toStringValue(order.expectedFinishDate, "") || undefined, materialCost, additionalCost, totalPrice: toNumberValue(order.totalPrice, legacyCost || materialCost + configurationCost + additionalCost), cost: legacyCost, employee: order.employee ? normalizeUser(order.employee) : undefined, deliveryEmployee: order.deliveryEmployee ? normalizeUser(order.deliveryEmployee) : undefined, sizes: normalizeStringArray(order.sizes), colors: normalizeStringArray(order.colors), deliveryLocation: { address: toStringValue(deliveryLocation.address, ""), city: toStringValue(deliveryLocation.city, ""), notes: toStringValue(deliveryLocation.notes, "") }, isCancelled: toBooleanValue(order.isCancelled, false), cancelledAt: toStringValue(order.cancelledAt, "") || undefined, cancelReason: toStringValue(order.cancelReason, "") || undefined, isRejected: toBooleanValue(order.isRejected, false), rejectedAt: toStringValue(order.rejectedAt, "") || undefined, rejectReason: toStringValue(order.rejectReason, "") || undefined, deliveredAt: toStringValue(order.deliveredAt, "") || undefined, stageCompletionRequests: normalizeStageCompletionRequests(order.stageCompletionRequests), createdAt: toStringValue(order.createdAt, "") };
 }

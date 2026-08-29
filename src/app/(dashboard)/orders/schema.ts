@@ -8,6 +8,7 @@ export const ORDER_STATUS = [
   "PACKAGING",
   "STORAGE",
   "DELIVERY",
+  "DELIVERED",
 ] as const;
 
 const objectIdPattern = /^[a-f\d]{24}$/i;

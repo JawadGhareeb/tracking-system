@@ -12,7 +12,7 @@ import { normalizeOrder } from "@/lib/normalize-api";
 import { ordersApiService } from "@/services/api.orders.service";
 import { IOrder, OrderStatus } from "@/types";
 
-const statusKey: Record<OrderStatus, string> = { PENDING: "pending", CUTTING: "cutting", SEWING: "sewing", PRINTING: "printing", PACKAGING: "packaging", STORAGE: "storage", DELIVERY: "delivery" };
+const statusKey: Record<OrderStatus, string> = { PENDING: "pending", CUTTING: "cutting", SEWING: "sewing", PRINTING: "printing", PACKAGING: "packaging", STORAGE: "storage", DELIVERY: "delivery", DELIVERED: "delivered" };
 
 export default function EmployeeOrdersPage() {
   const { t } = useTranslation();

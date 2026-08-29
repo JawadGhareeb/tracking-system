@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import {
   ClipboardList,
+  Home,
   Languages,
   LogOut,
   Monitor,
@@ -127,7 +128,7 @@ export function CustomerSiteHeader() {
           </div>
         </Link>
 
-        <div className="flex items-center gap-3 rounded-2xl border border-[var(--primary-100)] bg-[var(--white)]/85 p-2 shadow-[0_8px_22px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center gap-3"><Link href="/" className="hidden items-center gap-2 rounded-xl border border-[var(--primary-100)] px-3 py-2 text-sm font-semibold text-[var(--black-300)] transition hover:bg-[var(--primary-100)] sm:inline-flex"><Home className="h-4 w-4" />{t("sidebar.goToWebsite", { defaultValue: "الرئيسية" })}</Link><div className="flex items-center gap-3 rounded-2xl border border-[var(--primary-100)] bg-[var(--white)]/85 p-2 shadow-[0_8px_22px_rgba(0,0,0,0.08)]">
           <div ref={languageMenuRef} className="relative">
             <button
               type="button"
@@ -275,7 +276,7 @@ export function CustomerSiteHeader() {
               </div>
             ) : null}
           </div>
-        </div>
+        </div></div>
       </div>
     </header>
   );

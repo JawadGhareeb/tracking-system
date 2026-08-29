@@ -44,6 +44,7 @@ const statusColors: Record<string, string> = {
   PACKAGING: "bg-[var(--accent-100)] text-[var(--primary-400)]",
   STORAGE: "bg-[var(--white-100)] text-[var(--black-300)]",
   DELIVERY: "bg-[#ddf6e8] text-[#2b9b5c] dark:bg-emerald-950/70 dark:text-emerald-300",
+  DELIVERED: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300",
 };
 
 const statusValues: OrderListStatusFilter[] = [
@@ -54,6 +55,7 @@ const statusValues: OrderListStatusFilter[] = [
   "PACKAGING",
   "STORAGE",
   "DELIVERY",
+  "DELIVERED",
 ];
 
 export default function EmployeeOrdersAdminPage() {
@@ -115,6 +117,7 @@ export default function EmployeeOrdersAdminPage() {
     PACKAGING: t("orderStatus.packaging"),
     STORAGE: t("orderStatus.storage"),
     DELIVERY: t("orderStatus.delivery"),
+    DELIVERED: t("orderStatus.delivered", { defaultValue: "تم التسليم" }),
   };
 
   return (

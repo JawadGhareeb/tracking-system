@@ -131,7 +131,7 @@ export default function DashboardHomePage() {
       label: t("adminOverview.delivered"),
       value: summary.deliveredOrders,
       icon: Boxes,
-      href: "/orders?status=DELIVERY",
+      href: "/orders?status=DELIVERED",
     },
     {
       label: t("adminOverview.customers"),

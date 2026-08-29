@@ -51,6 +51,9 @@ const statusColors: Record<string, string> = {
   PACKAGING: "bg-[var(--accent-100)] text-[var(--primary-400)]",
   STORAGE: "bg-[var(--white-100)] text-[var(--black-300)]",
   DELIVERY: "bg-[#ddf6e8] text-[#2b9b5c]",
+  DELIVERED: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300",
+  CANCELLED: "bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300",
+  REJECTED: "bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300",
 };
 
 export default function OrdersPage() {
@@ -85,6 +88,9 @@ export default function OrdersPage() {
     PACKAGING: t("orderStatus.packaging"),
     STORAGE: t("orderStatus.storage"),
     DELIVERY: t("orderStatus.delivery"),
+    DELIVERED: t("orderStatus.delivered", { defaultValue: "تم التسليم" }),
+    CANCELLED: t("dashboardOrders.cancelled", { defaultValue: "ملغى" }),
+    REJECTED: t("dashboardOrders.rejected", { defaultValue: "مرفوض" }),
   };
 
   const orderStatusOptions: Array<{ value: OrderListStatusFilter; label: string }> = [
@@ -95,6 +101,7 @@ export default function OrdersPage() {
     { value: "PACKAGING", label: t("orderStatus.packaging") },
     { value: "STORAGE", label: t("orderStatus.storage") },
     { value: "DELIVERY", label: t("orderStatus.delivery") },
+    { value: "DELIVERED", label: t("orderStatus.delivered", { defaultValue: "تم التسليم" }) },
   ];
 
   const totalPages = useMemo(() => {
@@ -359,7 +366,9 @@ export default function OrdersPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                orders.map((order) => (
+                orders.map((order) => {
+                  const effectiveStatus = order.isRejected ? "REJECTED" : order.isCancelled ? "CANCELLED" : order.status;
+                  return (
                   <TableRow key={order._id}>
                     <TableCell>{order.description}</TableCell>
                     <TableCell>
@@ -369,10 +378,10 @@ export default function OrdersPage() {
                       <div className="space-y-1">
                         <span
                           className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            statusColors[order.status] || statusColors.PENDING
+                            statusColors[effectiveStatus] || statusColors.PENDING
                           }`}
                         >
-                          {statusLabels[order.status] || order.status}
+                          {statusLabels[effectiveStatus] || effectiveStatus}
                         </span>
                         {order.stageCompletionRequests.some((request) => request.status === "PENDING" && request.stage === order.status) ? (
                           <p className="text-xs font-semibold text-[var(--secondary-500)]">{t("dashboardOrders.stageReviewPending")}</p>
@@ -412,7 +421,8 @@ export default function OrdersPage() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))
+                  );
+                })
               )}
             </TableBody>
           </Table>

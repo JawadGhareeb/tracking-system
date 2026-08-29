@@ -24,22 +24,26 @@ import {
 } from "@/components/ui/table";
 import { useRoles } from "@/hook/use-roles";
 import { Icons } from "@/lib/icons";
-import { IRole } from "@/types";
+import { IRole, RoleGroup } from "@/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface IRoleFormState {
   name: string;
   description: string;
+  group: RoleGroup;
 }
 
 const defaultRoleFormState: IRoleFormState = {
   name: "",
   description: "",
+  group: "EMPLOYEE",
 };
 
 function normalizeRoleFormState(form: IRoleFormState): IRoleFormState {
   return {
     name: form.name.trim(),
     description: form.description.trim(),
+    group: form.group,
   };
 }
 
@@ -119,6 +123,7 @@ export default function RolesPage() {
       setEditForm({
         name: roleDetails.name,
         description: roleDetails.description,
+        group: roleDetails.group || "EMPLOYEE",
       });
     } catch (requestError) {
       setEditSubmitError(
@@ -342,6 +347,7 @@ export default function RolesPage() {
                 required
               />
             </div>
+            <div className="space-y-2"><label className="text-sm font-medium">{t("dashboardRoles.fields.group", { defaultValue: "نوع الدور" })}</label><Select value={createForm.group} onValueChange={(value) => setCreateForm((previous) => ({ ...previous, group: value as RoleGroup }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ADMIN">Admin</SelectItem><SelectItem value="EMPLOYEE">Employee</SelectItem><SelectItem value="CUSTOMER">Customer</SelectItem></SelectContent></Select></div>
             <div className="space-y-2">
               <label htmlFor="create-role-description" className="text-sm font-medium">
                 {t("dashboardRoles.fields.description")}
@@ -427,6 +433,7 @@ export default function RolesPage() {
                   required
                 />
               </div>
+              <div className="space-y-2"><label className="text-sm font-medium">{t("dashboardRoles.fields.group", { defaultValue: "نوع الدور" })}</label><Select value={editForm.group} onValueChange={(value) => setEditForm((previous) => ({ ...previous, group: value as RoleGroup }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ADMIN">Admin</SelectItem><SelectItem value="EMPLOYEE">Employee</SelectItem><SelectItem value="CUSTOMER">Customer</SelectItem></SelectContent></Select></div>
               <div className="space-y-2">
                 <label htmlFor="edit-role-description" className="text-sm font-medium">
                   {t("dashboardRoles.fields.description")}

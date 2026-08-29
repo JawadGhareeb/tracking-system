@@ -42,4 +42,7 @@ export const ordersApiService = {
   updateStatus(id: string, status: OrderStatus) {
     return apiClient.patch<IOrder, { status: OrderStatus }>(API_ENDPOINTS.orders.status(id), { body: { status } });
   },
+  cancelMyOrder(id: string, reason?: string) { return apiClient.patch<IOrder, { reason?: string }>(API_ENDPOINTS.orders.cancelMy(id), { body: { reason } }); },
+  rejectOrder(id: string, reason?: string) { return apiClient.patch<IOrder, { reason?: string }>(API_ENDPOINTS.orders.rejectOrder(id), { body: { reason } }); },
+  assignDeliveryEmployee(id: string, employee: string) { return apiClient.patch<IOrder, { employee: string }>(API_ENDPOINTS.orders.deliveryAssignment(id), { body: { employee } }); },
 };

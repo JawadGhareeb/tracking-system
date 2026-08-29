@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const objectIdPattern = /^[a-f\d]{24}$/i;
 
-type Translator = (key: string) => string;
+type Translator = (key: string, options?: { defaultValue?: string }) => string;
 
 export function createEmployeeFormSchema(t: Translator) {
   return z.object({
@@ -13,6 +13,7 @@ export function createEmployeeFormSchema(t: Translator) {
       .trim()
       .min(2, t("authPages.validation.emailRequired"))
       .max(100, t("authPages.validation.emailMax")),
+    phoneNumber: z.string().trim().regex(/^\+?\d{7,15}$/, t("authPages.validation.phoneInvalid", { defaultValue: "Invalid phone number" })),
     username: z.string().trim().min(1, t("authPages.validation.usernameRequired")),
     password: z.string().trim().min(8, t("authPages.validation.passwordMin")),
     salary: z
@@ -20,6 +21,7 @@ export function createEmployeeFormSchema(t: Translator) {
       .trim()
       .optional()
       .refine((value) => value === undefined || value === "" || (!Number.isNaN(Number(value)) && Number(value) >= 0), t("employeeSchema.invalidSalary")),
+    isActive: z.enum(["true", "false"]),
     role: z
       .string()
       .trim()
@@ -74,6 +76,7 @@ export function createEditEmployeeFormSchema(t: Translator) {
     firstName: z.string().trim().optional(),
     lastName: z.string().trim().optional(),
     email: optionalEmailSchema,
+    phoneNumber: z.string().trim().optional().refine((value) => value === undefined || value === "" || /^\+?\d{7,15}$/.test(value), t("authPages.validation.phoneInvalid", { defaultValue: "Invalid phone number" })),
     username: z.string().trim().optional(),
     password: optionalPasswordSchema,
     role: optionalRoleSchema,

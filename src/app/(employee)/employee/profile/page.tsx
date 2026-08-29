@@ -24,6 +24,7 @@ export default function EmployeeProfilePage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -32,6 +33,7 @@ export default function EmployeeProfilePage() {
     setFirstName(next.fullName.firstName);
     setLastName(next.fullName.lastName);
     setEmail(next.email);
+    setPhoneNumber(next.phoneNumber || "");
     setUsername(next.username);
     setPassword("");
   };
@@ -70,6 +72,7 @@ export default function EmployeeProfilePage() {
           lastName: lastName.trim(),
         },
         email: email.trim(),
+        phoneNumber: phoneNumber.trim(),
         username: username.trim(),
         ...(password.trim() ? { password: password.trim() } : {}),
       });
@@ -137,6 +140,7 @@ export default function EmployeeProfilePage() {
                   <Info label={t("dashboardProfile.fields.firstName")} value={user.fullName.firstName} />
                   <Info label={t("dashboardProfile.fields.lastName")} value={user.fullName.lastName} />
                   <Info label={t("dashboardProfile.fields.email")} value={user.email} />
+                  <Info label={t("dashboardProfile.fields.phoneNumber", { defaultValue: "رقم الموبايل" })} value={user.phoneNumber || "-"} />
                   <Info label={t("dashboardProfile.fields.username")} value={user.username} />
                 </div>
                 <Button onClick={() => setEditing(true)}>{t("customerProfile.edit")}</Button>
@@ -147,6 +151,7 @@ export default function EmployeeProfilePage() {
                   <Field label={t("dashboardProfile.fields.firstName")} value={firstName} setValue={setFirstName} />
                   <Field label={t("dashboardProfile.fields.lastName")} value={lastName} setValue={setLastName} />
                   <Field label={t("dashboardProfile.fields.email")} value={email} setValue={setEmail} type="email" />
+                  <Field label={t("dashboardProfile.fields.phoneNumber", { defaultValue: "رقم الموبايل" })} value={phoneNumber} setValue={setPhoneNumber} type="tel" />
                   <Field label={t("dashboardProfile.fields.username")} value={username} setValue={setUsername} />
                   <Field label={t("dashboardProfile.fields.passwordOptional")} value={password} setValue={setPassword} type="password" />
                 </div>

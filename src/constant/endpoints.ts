@@ -38,6 +38,7 @@ export const API_ENDPOINTS = {
     available: "/raw-materials/available",
     byId: (id: string) => `/raw-materials/${id}`,
   },
+  productConfigurations: { list: "/product-configurations" },
   expenses: {
     list: "/expenses",
     byId: (id: string) => `/expenses/${id}`,
@@ -58,5 +59,8 @@ export const API_ENDPOINTS = {
     stageCompletionReject: (id: string, requestId: string) => `/orders/${id}/stage-completion/${requestId}/reject`,
     assignment: (id: string) => `/orders/${id}/assignment`,
     status: (id: string) => `/orders/${id}/status`,
+    cancelMy: (id: string) => `/orders/my/${id}/cancel`,
+    rejectOrder: (id: string) => `/orders/${id}/reject`,
+    deliveryAssignment: (id: string) => `/orders/${id}/delivery-assignment`,
   },
 } as const;

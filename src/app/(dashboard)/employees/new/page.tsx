@@ -56,10 +56,12 @@ export default function NewEmployeePage() {
       firstName: "",
       lastName: "",
       email: "",
+      phoneNumber: "",
       username: "",
       password: "",
       salary: "",
       role: "",
+      isActive: "true",
     },
   });
 
@@ -74,10 +76,12 @@ export default function NewEmployeePage() {
           lastName: values.lastName.trim(),
         },
         email: values.email.trim(),
+        phoneNumber: values.phoneNumber.trim(),
         username: values.username.trim(),
         password: values.password,
         salary: values.salary && values.salary.trim() !== "" ? Number(values.salary) : 0,
         role: values.role,
+        isActive: values.isActive === "true",
       });
 
       router.push("/employees");
@@ -177,6 +181,17 @@ export default function NewEmployeePage() {
                 />
                 <FormField
                   control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("employeeForm.fields.phoneNumber", { defaultValue: "رقم الموبايل" })}</FormLabel>
+                      <FormControl><Input type="tel" placeholder="+9639XXXXXXXX" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="username"
                   render={({ field }) => (
                     <FormItem>
@@ -212,6 +227,13 @@ export default function NewEmployeePage() {
                       </FormControl>
                       <FormMessage />
                     </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="isActive"
+                  render={({ field }) => (
+                    <FormItem><FormLabel>{t("employeeForm.fields.status")}</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="true">{t("dashboardUsers.statusActive")}</SelectItem><SelectItem value="false">{t("dashboardUsers.statusInactive")}</SelectItem></SelectContent></Select><FormMessage /></FormItem>
                   )}
                 />
                 <FormField

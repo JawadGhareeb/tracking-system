@@ -13,6 +13,7 @@ interface IRegisterErrors {
   firstName?: string;
   lastName?: string;
   email?: string;
+  phoneNumber?: string;
   password?: string;
   confirmPassword?: string;
   general?: string;
@@ -25,6 +26,7 @@ export default function RegisterPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<IRegisterErrors>({});
@@ -35,6 +37,7 @@ export default function RegisterPage() {
     const normalizedFirstName = firstName.trim();
     const normalizedLastName = lastName.trim();
     const normalizedEmail = email.trim();
+    const normalizedPhoneNumber = phoneNumber.trim().replace(/[\s()-]/g, "");
     const normalizedPassword = password.trim();
     const normalizedConfirmPassword = confirmPassword.trim();
 
@@ -52,6 +55,12 @@ export default function RegisterPage() {
       nextErrors.email = t("authPages.validation.emailMin");
     } else if (normalizedEmail.length > 100) {
       nextErrors.email = t("authPages.validation.emailMax");
+    }
+
+    if (!normalizedPhoneNumber) {
+      nextErrors.phoneNumber = t("authPages.validation.phoneRequired", { defaultValue: "رقم الموبايل مطلوب" });
+    } else if (!/^\+?\d{7,15}$/.test(normalizedPhoneNumber)) {
+      nextErrors.phoneNumber = t("authPages.validation.phoneInvalid", { defaultValue: "رقم الموبايل غير صالح" });
     }
 
     if (!normalizedPassword) {
@@ -79,6 +88,7 @@ export default function RegisterPage() {
         lastName: normalizedLastName,
       },
       email: normalizedEmail,
+      phoneNumber: normalizedPhoneNumber,
       password: normalizedPassword,
       confirmPassword: normalizedConfirmPassword,
     });
@@ -162,6 +172,25 @@ export default function RegisterPage() {
             }`}
           />
           {errors.email ? <p className="text-right text-xs text-[var(--danger)]">{errors.email}</p> : null}
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="phoneNumber" className="block text-right text-sm font-medium">
+            {t("authPages.fields.phoneNumber", { defaultValue: "رقم الموبايل" })}
+          </label>
+          <Input
+            id="phoneNumber"
+            type="tel"
+            placeholder={t("authPages.register.phonePlaceholder", { defaultValue: "+963 9xx xxx xxx" })}
+            value={phoneNumber}
+            onChange={(event) => {
+              setPhoneNumber(event.target.value);
+              setErrors((previous) => ({ ...previous, phoneNumber: undefined, general: undefined }));
+            }}
+            required
+            className={`text-right ${errors.phoneNumber ? "border-[var(--danger)] focus-visible:ring-[var(--danger)]" : ""}`}
+          />
+          {errors.phoneNumber ? <p className="text-right text-xs text-[var(--danger)]">{errors.phoneNumber}</p> : null}
         </div>
 
         <div className="space-y-2">

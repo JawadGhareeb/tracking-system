@@ -93,6 +93,7 @@ export default function EditEmployeePage() {
       firstName: "",
       lastName: "",
       email: "",
+      phoneNumber: "",
       username: "",
       password: "",
       role: "",
@@ -119,6 +120,7 @@ export default function EditEmployeePage() {
           firstName: user.fullName.firstName,
           lastName: user.fullName.lastName,
           email: user.email,
+          phoneNumber: user.phoneNumber || "",
           username: user.username,
           password: "",
           role: user.role._id,
@@ -154,6 +156,7 @@ export default function EditEmployeePage() {
     const firstName = toOptionalTrimmedString(values.firstName);
     const lastName = toOptionalTrimmedString(values.lastName);
     const email = toOptionalTrimmedString(values.email);
+    const phoneNumber = toOptionalTrimmedString(values.phoneNumber);
     const username = toOptionalTrimmedString(values.username);
     const role = toOptionalTrimmedString(values.role);
     const payload: IUpdateUserPayload = {};
@@ -169,6 +172,7 @@ export default function EditEmployeePage() {
       payload.email = email;
     }
 
+    if (phoneNumber) payload.phoneNumber = phoneNumber;
     if (username) {
       payload.username = username;
     }
@@ -299,6 +303,11 @@ export default function EditEmployeePage() {
                         <FormMessage />
                       </FormItem>
                     )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (<FormItem><FormLabel>{t("employeeForm.fields.phoneNumber", { defaultValue: "رقم الموبايل" })}</FormLabel><FormControl><Input type="tel" {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)}
                   />
                   <FormField
                     control={form.control}
